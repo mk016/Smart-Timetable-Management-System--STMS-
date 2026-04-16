@@ -10,9 +10,11 @@ import {
   Download,
   Edit3,
   Grip,
+  History,
   LayoutGrid,
   Move,
   RefreshCcw,
+  Save,
   ShieldCheck,
   Sparkles,
   WandSparkles,
@@ -72,7 +74,11 @@ export function TimetableWorkspace({
   const [showHolidayModal, setShowHolidayModal] = useState(false);
   const [showConflictsModal, setShowConflictsModal] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [generatePrompt, setGeneratePrompt] = useState("");
+  const [draftName, setDraftName] = useState("");
+  const [snapshots, setSnapshots] = useState<{id:string, name:string, status:string, createdAt:string}[]>([]);
   const [addingSlot, setAddingSlot] = useState<{ dayOfWeek: WeekDay; slotStart: number } | null>(null);
   const [addForm, setAddForm] = useState({ batchId: "", subjectId: "", teacherId: "", roomId: "" });
   const [editForm, setEditForm] = useState({ teacherId: "", roomId: "", dayOfWeek: "", slotStart: "" });
@@ -572,6 +578,33 @@ export function TimetableWorkspace({
                 <button
                   className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 px-3 py-2 text-xs font-medium text-ink transition hover:border-accent hover:text-accent"
                   type="button"
+                  onClick={() => setShowDraftModal(true)}
+                >
+                  <Save className="h-3.5 w-3.5" />
+                  Save Draft
+                </button>
+                <button
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 px-3 py-2 text-xs font-medium text-ink transition hover:border-accent hover:text-accent"
+                  type="button"
+                  onClick={async () => {
+                    const toastId = toast.loading("Loading history...");
+                    try {
+                      const res = await fetch("/api/snapshots");
+                      const data = await res.json();
+                      setSnapshots(data);
+                      setShowHistoryModal(true);
+                      toast.dismiss(toastId);
+                    } catch (e) {
+                      toast.error("Failed to load history", { id: toastId });
+                    }
+                  }}
+                >
+                  <History className="h-3.5 w-3.5" />
+                  History
+                </button>
+                <button
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 px-3 py-2 text-xs font-medium text-ink transition hover:border-accent hover:text-accent"
+                  type="button"
                   onClick={() =>
                     mutateAction("validate", async () => {
                       const response = await fetch("/api/timetable/validate");
@@ -812,6 +845,135 @@ export function TimetableWorkspace({
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* ─── Save Draft Modal ─────────────────────────────── */}
+      {showDraftModal && !readOnly && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 backdrop-blur-sm sm:p-4" onClick={() => setShowDraftModal(false)}>
+          <form
+            className="w-full max-w-md rounded-2xl border border-white/10 bg-forest p-5 text-white shadow-2xl sm:rounded-2xl border-t-4 border-t-accent"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setShowDraftModal(false);
+              await mutateAction("draft", async () => {
+                const response = await fetch("/api/snapshots", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ name: draftName, status: "DRAFT" })
+                });
+                return { ok: response.ok, payload: await response.json() };
+              }, "Saving draft...");
+              setDraftName("");
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <Save className="h-5 w-5 text-accent" />
+                  Save as Draft
+                </h2>
+                <p className="mt-1 text-xs text-white/50">Save the current active timetable so you can resume later.</p>
+              </div>
+              <button type="button" onClick={() => setShowDraftModal(false)} className="rounded-lg p-2 hover:bg-white/10 transition">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40">Draft Name</span>
+                <input
+                  type="text"
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm outline-none placeholder:text-white/20 focus:border-accent"
+                  placeholder="e.g. Test Semester Setup"
+                  required
+                  value={draftName}
+                  onChange={(e) => setDraftName(e.target.value)}
+                />
+              </label>
+            </div>
+
+            <div className="mt-5 flex gap-3">
+              <button className="flex-1 rounded-lg bg-accent px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition hover:bg-white hover:text-ink" type="submit">
+                Save Draft
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ─── Timetable History Modal ─────────────────────────────── */}
+      {showHistoryModal && !readOnly && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 backdrop-blur-sm sm:p-4" onClick={() => setShowHistoryModal(false)}>
+          <div
+            className="w-full max-w-lg rounded-2xl border border-white/10 bg-forest p-5 text-white shadow-2xl sm:rounded-2xl border-t-4 border-t-accent max-h-[80vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-4 shrink-0">
+              <div>
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <History className="h-5 w-5 text-accent" />
+                  History / Snapshots
+                </h2>
+                <p className="mt-1 text-xs text-white/50">View or restore previously saved drafts.</p>
+              </div>
+              <button type="button" onClick={() => setShowHistoryModal(false)} className="rounded-lg p-2 hover:bg-white/10 transition">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 overflow-y-auto pr-2 custom-scrollbar">
+              {snapshots.length === 0 ? (
+                <div className="text-center text-sm text-white/40 py-8 border border-white/10 border-dashed rounded-xl">
+                  No drafts saved yet.
+                </div>
+              ) : (
+                snapshots.map((snap) => (
+                  <div key={snap.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 rounded-xl border border-white/10 bg-white/5 gap-3">
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-sm truncate">{snap.name || "Untitled Draft"}</h3>
+                      <p className="text-[10px] text-white/40 mt-1">
+                        {new Date(snap.createdAt).toLocaleString()} • {snap.status}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                      <button
+                        className="flex-1 sm:flex-none rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/60 transition hover:bg-white hover:text-ink hover:border-white font-medium shadow-sm"
+                        onClick={async () => {
+                          if (confirm("This will overwrite your current active timetable. Are you sure?")) {
+                            setShowHistoryModal(false);
+                            await mutateAction("restore", async () => {
+                              const response = await fetch(`/api/snapshots/${snap.id}`, { method: "POST" });
+                              return { ok: response.ok, payload: await response.json() };
+                            }, "Restoring from history...");
+                            refreshData();
+                          }
+                        }}
+                      >
+                        Restore
+                      </button>
+                      <button
+                        className="rounded-lg p-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-500 transition border border-transparent hover:border-red-500/20"
+                        onClick={async () => {
+                          if (confirm("Delete this draft permanently?")) {
+                            const res = await fetch(`/api/snapshots/${snap.id}`, { method: "DELETE" });
+                            if (res.ok) {
+                              setSnapshots(s => s.filter(x => x.id !== snap.id));
+                              toast.success("Draft deleted.");
+                            }
+                          }
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       )}
 

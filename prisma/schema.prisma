@@ -103,3 +103,11 @@ model ChangeLog {
   changeType       String
   timestamp        String
 }
+
+model TimetableSnapshot {
+  id        String   @id @default(cuid())
+  name      String   // e.g. "Draft 1", "Midterm Schedule"
+  status    String   @default("DRAFT") // "DRAFT" or "PUBLISHED"
+  entries   String   // JSON payload of all TimetableEntry rows
+  createdAt DateTime @default(now())
+}
