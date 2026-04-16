@@ -26,14 +26,14 @@ export function LoginForm() {
           <Sparkles className="h-4 w-4" />
           Secure Access
         </div>
-        <h1 className="mt-8 font-serif text-4xl uppercase tracking-tight sm:text-5xl">
+        <h1 className="mt-8 text-balance font-serif text-3xl uppercase tracking-tight sm:text-5xl">
           Login To <span className="text-accent">STMS</span>
         </h1>
         <p className="mt-6 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
           Admin, teacher aur student ke liye अलग role-based access ready hai. Demo accounts niche diye hue hain.
         </p>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {demoAccounts.map((account) => (
             <button
               key={account.role}
@@ -84,7 +84,9 @@ export function LoginForm() {
           <ShieldCheck className="h-4 w-4 text-accent" />
           Authentication
         </div>
-        <h2 className="mt-8 font-serif text-3xl uppercase tracking-tight text-ink sm:text-4xl">Welcome Back</h2>
+        <h2 className="mt-8 text-balance font-serif text-2xl uppercase tracking-tight text-ink sm:text-4xl">
+          Welcome Back
+        </h2>
 
         <div className="mt-8 space-y-5">
           <label className="block">

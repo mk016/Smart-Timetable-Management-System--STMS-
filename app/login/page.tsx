@@ -10,7 +10,7 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-canvas px-6 py-10 lg:px-10">
+    <main className="min-h-screen bg-canvas px-4 py-6 sm:px-6 sm:py-10 lg:px-10">
       <div className="mx-auto max-w-[1200px]">
         <LoginForm />
       </div>

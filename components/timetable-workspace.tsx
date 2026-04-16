@@ -300,9 +300,9 @@ export function TimetableWorkspace({
     <div className="space-y-8">
       <section className="rounded-[2rem] border border-ink/10 bg-white p-4 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-6 lg:p-8">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-          <div>
+          <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.3em] text-accent">Scheduler Workspace</p>
-            <h1 className="mt-3 font-serif text-3xl uppercase tracking-tight text-ink sm:text-4xl">
+            <h1 className="mt-3 text-balance font-serif text-3xl uppercase tracking-tight text-ink sm:text-4xl">
               Timetable Board
             </h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-ink/60">
@@ -314,11 +314,11 @@ export function TimetableWorkspace({
               </p>
             ) : null}
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="grid w-full gap-3 sm:flex sm:w-auto sm:flex-wrap xl:max-w-xl xl:justify-end">
             {!readOnly ? (
               <>
                 <button
-                  className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-xs uppercase tracking-[0.2em] text-white transition hover:bg-accent"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-xs uppercase tracking-[0.2em] text-white transition hover:bg-accent sm:w-auto"
                   type="button"
                   onClick={() =>
                     mutateAction("generate", async () => {
@@ -331,7 +331,7 @@ export function TimetableWorkspace({
                   {loading === "generate" ? "Generating..." : "Generate"}
                 </button>
                 <button
-                  className="inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent sm:w-auto"
                   type="button"
                   onClick={() =>
                     mutateAction("validate", async () => {
@@ -344,7 +344,7 @@ export function TimetableWorkspace({
                   Validate
                 </button>
                 <button
-                  className="inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent sm:w-auto"
                   type="button"
                   onClick={() =>
                     mutateAction("publish", async () => {
@@ -359,7 +359,7 @@ export function TimetableWorkspace({
               </>
             ) : null}
             <a
-              className="inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent sm:w-auto"
               href="/api/exports/excel"
               target="_blank"
             >
@@ -367,7 +367,7 @@ export function TimetableWorkspace({
               Excel
             </a>
             <a
-              className="inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent sm:w-auto"
               href="/api/exports/pdf"
               target="_blank"
             >
@@ -377,9 +377,9 @@ export function TimetableWorkspace({
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="mt-8 grid gap-3 sm:flex sm:flex-row sm:flex-wrap sm:items-center">
           <select
-            className="rounded-full border border-ink/15 bg-transparent px-4 py-3 text-sm text-ink outline-none"
+            className="w-full rounded-full border border-ink/15 bg-transparent px-4 py-3 text-sm text-ink outline-none sm:w-auto sm:min-w-[12rem]"
             value={batchFilter}
             onChange={(event) => setBatchFilter(event.target.value)}
           >
@@ -391,7 +391,7 @@ export function TimetableWorkspace({
             ))}
           </select>
           <button
-            className="rounded-full border border-ink/15 px-4 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent"
+            className="inline-flex w-full items-center justify-center rounded-full border border-ink/15 px-4 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent sm:w-auto"
             type="button"
             onClick={() =>
               mutateAction("quality", async () => {
@@ -404,7 +404,7 @@ export function TimetableWorkspace({
             AI Quality
           </button>
           <button
-            className="rounded-full border border-ink/15 px-4 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent"
+            className="inline-flex w-full items-center justify-center rounded-full border border-ink/15 px-4 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent sm:w-auto"
             type="button"
             onClick={() =>
               mutateAction("resolve", async () => {
@@ -417,7 +417,7 @@ export function TimetableWorkspace({
             Resolve Preview
           </button>
           <button
-            className="rounded-full border border-ink/15 px-4 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent"
+            className="inline-flex w-full items-center justify-center rounded-full border border-ink/15 px-4 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent sm:w-auto"
             type="button"
             onClick={refreshData}
           >
@@ -425,7 +425,7 @@ export function TimetableWorkspace({
           </button>
           {!readOnly && selectedMoveEntryId ? (
             <button
-              className="inline-flex items-center gap-2 rounded-full border border-red-200 px-4 py-3 text-xs uppercase tracking-[0.2em] text-red-600 transition hover:bg-red-50"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-red-200 px-4 py-3 text-xs uppercase tracking-[0.2em] text-red-600 transition hover:bg-red-50 sm:w-auto"
               onClick={() => {
                 setSelectedMoveEntryId(null);
                 setDraggedEntryId(null);
@@ -445,14 +445,14 @@ export function TimetableWorkspace({
 
       <div className="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-5">
-          <div className="lg:hidden space-y-4">
+          <div className="space-y-4 lg:hidden">
             {WEEK_DAYS.map((day) => (
               <section
                 key={day}
-                className="overflow-hidden rounded-[2rem] border border-ink/10 bg-white p-4 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)]"
+                className="overflow-hidden rounded-[2rem] border border-ink/10 bg-white p-3 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-4"
               >
                 <div className="mb-4 flex items-center justify-between gap-3 border-b border-ink/10 pb-4">
-                  <h2 className="font-serif text-2xl uppercase tracking-tight text-ink">{day}</h2>
+                  <h2 className="font-serif text-xl uppercase tracking-tight text-ink sm:text-2xl">{day}</h2>
                   <span className="rounded-full bg-accent/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-accent">
                     Day View
                   </span>
@@ -464,7 +464,7 @@ export function TimetableWorkspace({
                     );
 
                     return (
-                      <div key={`${day}-${slot.slotIndex}`} className="rounded-3xl bg-canvas/50 p-3">
+                      <div key={`${day}-${slot.slotIndex}`} className="rounded-3xl bg-canvas/50 p-3 sm:p-4">
                         <div className="mb-3 flex items-center justify-between gap-3">
                           <div>
                             <p className="text-sm font-medium text-ink">{slot.startTime}</p>
@@ -585,7 +585,10 @@ export function TimetableWorkspace({
                       setHolidayForm((current) => ({ ...current, holidayDate: event.target.value }))
                     }
                   />
-                  <button className="rounded-full bg-accent px-4 py-3 text-xs uppercase tracking-[0.2em]" type="submit">
+                  <button
+                    className="w-full rounded-full bg-accent px-4 py-3 text-xs uppercase tracking-[0.2em] sm:w-auto"
+                    type="submit"
+                  >
                     Save Holiday
                   </button>
                 </form>
@@ -635,7 +638,10 @@ export function TimetableWorkspace({
                       setLeaveForm((current) => ({ ...current, reason: event.target.value }))
                     }
                   />
-                  <button className="rounded-full bg-accent px-4 py-3 text-xs uppercase tracking-[0.2em]" type="submit">
+                  <button
+                    className="w-full rounded-full bg-accent px-4 py-3 text-xs uppercase tracking-[0.2em] sm:w-auto"
+                    type="submit"
+                  >
                     Save Leave
                   </button>
                 </form>

@@ -23,7 +23,7 @@ export function Chatbot() {
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-[0_12px_30px_-5px_rgba(75,163,227,0.5)] transition hover:scale-105 active:scale-95",
+          "fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white shadow-[0_12px_30px_-5px_rgba(75,163,227,0.5)] transition hover:scale-105 active:scale-95 sm:bottom-6 sm:right-6 sm:h-14 sm:w-14",
           isOpen && "pointer-events-none opacity-0"
         )}
       >
@@ -31,7 +31,7 @@ export function Chatbot() {
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 flex h-[600px] w-[380px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[2rem] border border-ink/10 bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)]">
+        <div className="fixed inset-x-3 bottom-3 top-20 z-50 flex flex-col overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] sm:inset-x-auto sm:bottom-6 sm:right-6 sm:top-auto sm:h-[min(600px,calc(100dvh-3rem))] sm:w-[380px] sm:max-w-[calc(100vw-3rem)] sm:rounded-[2rem]">
           <div className="flex items-center justify-between border-b border-ink/10 bg-forest px-5 py-4 text-white">
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/20">
@@ -47,9 +47,9 @@ export function Chatbot() {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto bg-canvas/30 p-5 space-y-4">
+          <div className="flex-1 space-y-4 overflow-y-auto bg-canvas/30 p-4 sm:p-5">
             {messages.length === 0 ? (
-              <div className="text-center text-sm text-ink/50 mt-10">
+              <div className="mt-10 text-center text-sm text-ink/50">
                 Hi! Ask me to fix a schedule conflict, or generate alternative slots without overlaps.
               </div>
             ) : null}
@@ -89,7 +89,7 @@ export function Chatbot() {
             onSubmit={handleSubmit}
             className="border-t border-ink/10 bg-white p-4"
           >
-            <div className="flex items-center gap-2 rounded-full border border-ink/15 bg-canvas/30 pl-4 pr-2 py-1.5 focus-within:border-accent focus-within:ring-1 focus-within:ring-accent transition">
+            <div className="flex items-center gap-2 rounded-full border border-ink/15 bg-canvas/30 py-1.5 pl-4 pr-2 transition focus-within:border-accent focus-within:ring-1 focus-within:ring-accent">
               <input
                 value={input}
                 onChange={handleInputChange}

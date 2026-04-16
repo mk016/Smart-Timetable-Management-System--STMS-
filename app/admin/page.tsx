@@ -37,20 +37,20 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[2rem] bg-forest px-5 py-6 text-white shadow-halo sm:px-8 sm:py-8">
+      <section className="rounded-[2rem] bg-forest px-4 py-6 text-white shadow-halo sm:px-8 sm:py-8">
         <p className="text-xs uppercase tracking-[0.3em] text-accent">Admin Dashboard</p>
-        <h1 className="mt-3 font-serif text-4xl uppercase tracking-tight sm:text-5xl">
+        <h1 className="mt-3 text-balance font-serif text-3xl uppercase tracking-tight sm:text-5xl">
           Run The Full <span className="text-accent">Scheduling Operation</span>
         </h1>
         <p className="mt-6 max-w-3xl text-sm leading-7 text-white/65">
           PRD ke core modules yahan se accessible hain: master data setup, timetable generation, validation,
           leave/holiday control, export aur AI assistance.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/admin/timetable" className="rounded-full bg-white px-5 py-3 text-xs uppercase tracking-[0.2em] text-forest transition hover:bg-accent hover:text-white">
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Link href="/admin/timetable" className="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-xs uppercase tracking-[0.2em] text-forest transition hover:bg-accent hover:text-white">
             Open Timetable
           </Link>
-          <Link href="/admin/teachers" className="rounded-full border border-white/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-white transition hover:border-accent hover:text-accent">
+          <Link href="/admin/teachers" className="inline-flex items-center justify-center rounded-full border border-white/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-white transition hover:border-accent hover:text-accent">
             Manage Teachers
           </Link>
         </div>
@@ -60,12 +60,12 @@ export default async function AdminDashboardPage() {
         {cards.map((card) => {
           const Icon = card.icon;
           return (
-            <div key={card.label} className="rounded-[2rem] border border-ink/10 bg-white p-6 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)]">
+            <div key={card.label} className="rounded-[2rem] border border-ink/10 bg-white p-5 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-accent">
                 <Icon className="h-5 w-5" />
               </div>
               <p className="mt-6 text-xs uppercase tracking-[0.2em] text-ink/45">{card.label}</p>
-              <p className="mt-3 text-4xl text-ink sm:text-5xl">{card.value}</p>
+              <p className="mt-3 text-3xl text-ink sm:text-5xl">{card.value}</p>
               <p className="mt-2 text-sm text-ink/55">{card.hint}</p>
             </div>
           );
@@ -73,12 +73,14 @@ export default async function AdminDashboardPage() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[2rem] border border-ink/10 bg-white p-6 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)]">
+        <div className="rounded-[2rem] border border-ink/10 bg-white p-5 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-6">
           <div className="flex items-center gap-3">
             <Activity className="h-5 w-5 text-accent" />
             <div>
               <p className="text-xs uppercase tracking-[0.25em] text-accent">Current Status</p>
-              <h2 className="font-serif text-3xl uppercase tracking-tight text-ink">Operational Snapshot</h2>
+              <h2 className="font-serif text-2xl uppercase tracking-tight text-ink sm:text-3xl">
+                Operational Snapshot
+              </h2>
             </div>
           </div>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -103,12 +105,12 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-white/10 bg-forest p-6 text-white shadow-halo">
+        <div className="rounded-[2rem] border border-white/10 bg-forest p-5 text-white shadow-halo sm:p-6">
           <div className="flex items-center gap-3">
             <WandSparkles className="h-5 w-5 text-accent" />
             <div>
               <p className="text-xs uppercase tracking-[0.25em] text-accent">AI Layer</p>
-              <h2 className="font-serif text-3xl uppercase tracking-tight">Groq-Ready Endpoints</h2>
+              <h2 className="font-serif text-2xl uppercase tracking-tight sm:text-3xl">Groq-Ready Endpoints</h2>
             </div>
           </div>
           <ul className="mt-6 space-y-4 text-sm leading-7 text-white/65">

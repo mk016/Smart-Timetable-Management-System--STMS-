@@ -36,7 +36,7 @@ export default async function HomePage() {
         style={{ transform: "scaleX(0)" }}
       />
 
-      <div className="fixed left-0 right-0 top-4 z-50 flex justify-center px-4 sm:top-6 sm:px-6">
+      <div className="fixed left-0 right-0 top-3 z-50 flex justify-center px-3 sm:top-6 sm:px-6">
         <header className="reveal in-view w-full max-w-[1100px] rounded-[2rem] border border-ink/10 bg-canvas/80 px-4 py-4 shadow-[0_8px_32px_rgba(45,50,47,0.05)] backdrop-blur-xl md:rounded-full md:px-8 md:py-0">
           <div className="flex items-center justify-between gap-4 md:h-16">
             <Link href="/" className="font-serif text-lg uppercase tracking-tight text-ink sm:text-xl">
@@ -79,7 +79,7 @@ export default async function HomePage() {
         </header>
       </div>
 
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 pb-20 pt-40 sm:px-6 sm:pt-32">
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 pb-16 pt-36 sm:px-6 sm:pb-20 sm:pt-32">
         <div className="bg-grid absolute inset-0 z-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
         <div className="relative z-10 mx-auto flex max-w-[1200px] flex-col items-center text-center">
           <div className="reveal delay-100 inline-flex items-center gap-3 rounded-full border border-accent/20 bg-white/60 px-5 py-2 text-xs uppercase tracking-[0.25em] text-ink/80 backdrop-blur-md">
@@ -87,14 +87,14 @@ export default async function HomePage() {
             Smart Timetable Management System
           </div>
 
-          <h1 className="mt-8 max-w-6xl font-serif text-5xl uppercase leading-[0.88] tracking-tight text-ink sm:text-6xl md:text-8xl lg:text-9xl">
+          <h1 className="mt-8 max-w-6xl text-balance font-serif text-[clamp(3rem,13vw,9rem)] uppercase leading-[0.9] tracking-tight text-ink">
             <span className="reveal delay-200 block">Build Conflict-Free</span>
             <span className="reveal delay-300 block bg-gradient-to-r from-ink to-accent bg-clip-text text-transparent">
               Academic Schedules
             </span>
           </h1>
 
-          <p className="reveal delay-400 mt-8 max-w-4xl font-serif text-lg leading-relaxed text-ink/70 sm:text-xl md:text-3xl">
+          <p className="reveal delay-400 mt-8 max-w-4xl text-balance font-serif text-base leading-relaxed text-ink/70 sm:text-xl md:text-3xl">
             Next.js based institute scheduling platform with admin controls, teacher/student dashboards,
             solver-driven timetable generation, exports, and Groq-ready AI assistance.
           </p>
@@ -123,16 +123,16 @@ export default async function HomePage() {
 
       <section className="relative -mt-10 overflow-hidden rounded-t-[3rem] bg-forest py-20 sm:py-24 md:py-28" id="vision">
         <div className="bg-grid-dark absolute inset-0 opacity-25 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
-        <div className="relative z-10 mx-auto max-w-[1080px] px-6 text-center">
+        <div className="relative z-10 mx-auto max-w-[1080px] px-4 text-center sm:px-6">
           <div className="reveal flex items-center justify-center gap-4">
             <span className="h-px w-12 bg-accent" />
             <span className="text-xs uppercase tracking-[0.35em] text-accent">The Vision</span>
             <span className="h-px w-12 bg-accent" />
           </div>
-          <h2 className="reveal delay-100 mt-8 font-serif text-4xl uppercase leading-[0.95] tracking-tight text-white sm:text-5xl md:text-6xl">
+          <h2 className="reveal delay-100 mt-8 text-balance font-serif text-3xl uppercase leading-[0.95] tracking-tight text-white sm:text-5xl md:text-6xl">
             From Manual Chaos To <span className="block text-accent">Predictable Timetable Operations</span>
           </h2>
-          <p className="reveal delay-200 mx-auto mt-8 max-w-4xl font-serif text-lg leading-relaxed text-white/65 md:text-2xl">
+          <p className="reveal delay-200 mx-auto mt-8 max-w-4xl text-balance font-serif text-base leading-relaxed text-white/65 sm:text-lg md:text-2xl">
             STMS institute ke timetable process ko automate karta hai: master data setup, solver-based schedule
             generation, hard constraint validation, leave/holiday impact handling, manual fine-tuning, aur role-wise
             visibility ek hi product me.
@@ -168,7 +168,7 @@ export default async function HomePage() {
             return (
               <div
                 key={card.title}
-                className={`reveal rounded-[2rem] border border-white/10 bg-[#2d322f] p-6 text-white transition duration-500 hover:border-accent/30 sm:p-8 ${index === 3 ? "lg:col-span-1" : ""}`}
+                className={`reveal rounded-[2rem] border border-white/10 bg-[#2d322f] p-5 text-white transition duration-500 hover:border-accent/30 sm:p-8 ${index === 3 ? "lg:col-span-1" : ""}`}
               >
                 <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-full border border-accent/30 bg-accent/10 text-accent">
                   <Icon className="h-5 w-5" />
@@ -191,12 +191,12 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 bg-forest/80" />
         <div className="absolute inset-0 bg-gradient-to-t from-forest via-accent/10 to-forest" />
-        <div className="relative z-10 mx-auto max-w-[1200px] px-6 text-center text-white">
+        <div className="relative z-10 mx-auto max-w-[1200px] px-4 text-center text-white sm:px-6">
           <div className="reveal inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.25em] text-white/70">
             <CalendarClock className="h-4 w-4 text-accent" />
             Product Workflow
           </div>
-          <h2 className="reveal delay-100 mt-8 font-serif text-4xl uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-7xl">
+          <h2 className="reveal delay-100 mt-8 text-balance font-serif text-3xl uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-7xl">
             Input To Output <span className="block text-accent">In One Operational Loop</span>
           </h2>
           <div className="reveal delay-200 mt-10 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
@@ -217,10 +217,10 @@ export default async function HomePage() {
                 <Blocks className="h-4 w-4" />
                 Live Product Surface
               </div>
-              <h2 className="mt-8 font-serif text-4xl uppercase leading-[0.95] tracking-tight text-ink sm:text-5xl md:text-6xl">
+              <h2 className="mt-8 text-balance font-serif text-3xl uppercase leading-[0.95] tracking-tight text-ink sm:text-5xl md:text-6xl">
                 Pages Built From The <span className="block text-accent">PRD Scope</span>
               </h2>
-              <p className="mt-6 max-w-2xl font-serif text-lg leading-relaxed text-ink/65 sm:text-xl">
+              <p className="mt-6 max-w-2xl text-balance font-serif text-base leading-relaxed text-ink/65 sm:text-xl">
                 Landing page ke sath role-based login, admin CRUD pages, timetable workspace, teacher view,
                 student dashboard aur export/AI APIs ready hain.
               </p>
@@ -236,7 +236,7 @@ export default async function HomePage() {
             </div>
 
             <div className="grid gap-6">
-              <div className="rounded-[2rem] border border-ink/10 bg-white p-8 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)]">
+              <div className="rounded-[2rem] border border-ink/10 bg-white p-5 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-8">
                 <p className="text-xs uppercase tracking-[0.3em] text-accent">Admin Workspace</p>
                 <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight text-ink sm:text-4xl">Generate. Validate. Publish.</h3>
                 <p className="mt-4 text-sm leading-7 text-ink/60">
@@ -244,14 +244,14 @@ export default async function HomePage() {
                 </p>
               </div>
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="rounded-[2rem] border border-white/10 bg-forest p-8 text-white">
+                <div className="rounded-[2rem] border border-white/10 bg-forest p-5 text-white sm:p-8">
                   <p className="text-xs uppercase tracking-[0.3em] text-accent">Teacher Panel</p>
                   <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight">Today & Week View</h3>
                   <p className="mt-4 text-sm leading-7 text-white/60">
                     Faculty ko upcoming classes, assigned rooms aur daily load ek glance me milta hai.
                   </p>
                 </div>
-                <div className="rounded-[2rem] border border-ink/10 bg-white p-8">
+                <div className="rounded-[2rem] border border-ink/10 bg-white p-5 sm:p-8">
                   <p className="text-xs uppercase tracking-[0.3em] text-accent">Student Panel</p>
                   <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight text-ink">Batch-Based Timetable</h3>
                   <p className="mt-4 text-sm leading-7 text-ink/60">
@@ -259,7 +259,7 @@ export default async function HomePage() {
                   </p>
                 </div>
               </div>
-              <div className="rounded-[2rem] border border-accent/20 bg-gradient-to-r from-accent/15 to-transparent p-8">
+              <div className="rounded-[2rem] border border-accent/20 bg-gradient-to-r from-accent/15 to-transparent p-5 sm:p-8">
                 <p className="text-xs uppercase tracking-[0.3em] text-accent">Technical Stack</p>
                 <p className="mt-3 text-lg leading-8 text-ink/70">
                   Next.js App Router, file-backed JSON demo persistence, route handlers, deterministic scheduler,
@@ -275,10 +275,10 @@ export default async function HomePage() {
         <div className="mx-auto max-w-4xl">
           <div className="mx-auto mb-8 h-px w-12 bg-accent" />
           <p className="text-xs uppercase tracking-[0.35em] text-accent/80">Launch The System</p>
-          <h2 className="mt-6 font-serif text-4xl uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-7xl">
+          <h2 className="mt-6 text-balance font-serif text-3xl uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-7xl">
             Open The Dashboard And Start <span className="text-accent">Scheduling</span>
           </h2>
-          <p className="mx-auto mt-8 max-w-2xl font-serif text-lg leading-relaxed text-white/60 sm:text-xl">
+          <p className="mx-auto mt-8 max-w-2xl text-balance font-serif text-base leading-relaxed text-white/60 sm:text-xl">
             Demo credentials included hain, isliye aap seedha login karke admin flows test kar sakte ho.
           </p>
           <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">

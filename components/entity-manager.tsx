@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 
 type FieldType = "text" | "number" | "boolean" | "textarea" | "csv" | "select";
 
@@ -118,15 +118,17 @@ export function EntityManager({
 
   return (
     <div className="relative">
-      <div className="rounded-[2rem] border border-ink/10 bg-white p-6 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)]">
-        <div className="flex items-start justify-between gap-4">
-          <div>
+      <div className="rounded-[2rem] border border-ink/10 bg-white p-4 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.3em] text-accent">Master Data</p>
-            <h1 className="mt-3 font-serif text-4xl uppercase tracking-tight text-ink">{title}</h1>
+            <h1 className="mt-3 text-balance font-serif text-3xl uppercase tracking-tight text-ink sm:text-4xl">
+              {title}
+            </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-ink/60">{description}</p>
           </div>
           <button
-            className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-xs uppercase tracking-[0.2em] text-white transition hover:bg-accent"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-xs uppercase tracking-[0.2em] text-white transition hover:bg-accent sm:w-auto"
             type="button"
             onClick={() => {
               resetForm();
@@ -138,76 +140,135 @@ export function EntityManager({
           </button>
         </div>
 
-        <div className="mt-8 overflow-hidden rounded-3xl border border-ink/10">
-          <table className="min-w-full divide-y divide-ink/10 text-left">
-            <thead className="bg-canvas/70 text-xs uppercase tracking-[0.2em] text-ink/50">
-              <tr>
+        {message ? <p className="mt-5 text-sm text-ink/70">{message}</p> : null}
+
+        <div className="mt-8 space-y-4 md:hidden">
+          {items.map((item) => (
+            <article
+              key={String(item.id)}
+              className="rounded-3xl border border-ink/10 bg-canvas/45 p-4 shadow-sm"
+            >
+              <div className="space-y-3">
                 {visibleColumns.map((field) => (
-                  <th key={field.key} className="px-4 py-4 font-medium">
-                    {field.label}
-                  </th>
+                  <div key={field.key} className="rounded-2xl bg-white px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-ink/45">{field.label}</p>
+                    <p className="mt-2 break-words text-sm text-ink/75">
+                      {Array.isArray(item[field.key])
+                        ? (item[field.key] as unknown[]).join(", ") || "-"
+                        : String(item[field.key] ?? "-")}
+                    </p>
+                  </div>
                 ))}
-                <th className="px-4 py-4 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-ink/10 bg-white text-sm text-ink/70">
-              {items.map((item) => (
-                <tr key={String(item.id)}>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-ink/10 px-4 py-3 text-xs uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent"
+                  type="button"
+                  onClick={() => {
+                    setEditingId(String(item.id));
+                    setForm(buildFormState(item));
+                    setIsFormOpen(true);
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </button>
+                <button
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-red-200 px-4 py-3 text-xs uppercase tracking-[0.2em] text-red-600 transition hover:bg-red-50"
+                  type="button"
+                  onClick={async () => {
+                    const response = await fetch(`${apiBase}/${item.id}`, { method: "DELETE" });
+                    const result = await response.json();
+                    if (response.ok) {
+                      setItems((current) => current.filter((currentItem) => currentItem.id !== item.id));
+                      setMessage(result.message || "Deleted.");
+                    } else {
+                      setMessage(result.error || "Delete failed");
+                    }
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-8 hidden overflow-hidden rounded-3xl border border-ink/10 md:block">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-ink/10 text-left">
+              <thead className="bg-canvas/70 text-xs uppercase tracking-[0.2em] text-ink/50">
+                <tr>
                   {visibleColumns.map((field) => (
-                    <td key={field.key} className="px-4 py-4 align-top">
-                      {Array.isArray(item[field.key]) ? (item[field.key] as unknown[]).join(", ") : String(item[field.key] ?? "-")}
-                    </td>
+                    <th key={field.key} className="px-4 py-4 font-medium">
+                      {field.label}
+                    </th>
                   ))}
-                  <td className="px-4 py-4">
-                    <div className="flex gap-2">
-                      <button
-                        className="rounded-full border border-ink/10 p-2 transition hover:border-accent hover:text-accent"
-                        type="button"
-                        onClick={() => {
-                          setEditingId(String(item.id));
-                          setForm(buildFormState(item));
-                          setIsFormOpen(true);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                      <button
-                        className="rounded-full border border-red-200 p-2 text-red-600 transition hover:bg-red-50"
-                        type="button"
-                        onClick={async () => {
-                          const response = await fetch(`${apiBase}/${item.id}`, { method: "DELETE" });
-                          const result = await response.json();
-                          if (response.ok) {
-                            setItems((current) => current.filter((currentItem) => currentItem.id !== item.id));
-                            setMessage(result.message || "Deleted.");
-                          } else {
-                            setMessage(result.error || "Delete failed");
-                          }
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+                  <th className="px-4 py-4 font-medium">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-ink/10 bg-white text-sm text-ink/70">
+                {items.map((item) => (
+                  <tr key={String(item.id)}>
+                    {visibleColumns.map((field) => (
+                      <td key={field.key} className="px-4 py-4 align-top">
+                        {Array.isArray(item[field.key])
+                          ? (item[field.key] as unknown[]).join(", ")
+                          : String(item[field.key] ?? "-")}
+                      </td>
+                    ))}
+                    <td className="px-4 py-4">
+                      <div className="flex gap-2">
+                        <button
+                          className="rounded-full border border-ink/10 p-2 transition hover:border-accent hover:text-accent"
+                          type="button"
+                          onClick={() => {
+                            setEditingId(String(item.id));
+                            setForm(buildFormState(item));
+                            setIsFormOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          className="rounded-full border border-red-200 p-2 text-red-600 transition hover:bg-red-50"
+                          type="button"
+                          onClick={async () => {
+                            const response = await fetch(`${apiBase}/${item.id}`, { method: "DELETE" });
+                            const result = await response.json();
+                            if (response.ok) {
+                              setItems((current) => current.filter((currentItem) => currentItem.id !== item.id));
+                              setMessage(result.message || "Deleted.");
+                            } else {
+                              setMessage(result.error || "Delete failed");
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-3 backdrop-blur-sm sm:items-center sm:p-4">
           <form
-            className="w-full max-w-lg rounded-[2rem] border border-white/10 bg-forest p-6 text-white shadow-halo max-h-[90vh] overflow-y-auto"
+            className="max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl overflow-y-auto rounded-[2rem] border border-white/10 bg-forest p-5 text-white shadow-halo sm:max-h-[90vh] sm:p-6"
             onSubmit={handleSubmit}
           >
-            <div className="flex justify-between items-start mb-6">
+            <div className="mb-6 flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-accent">
                   {editingId ? "Update Record" : "Create Record"}
                 </p>
-                <h2 className="mt-3 font-serif text-3xl uppercase tracking-tight">
+                <h2 className="mt-3 text-balance font-serif text-2xl uppercase tracking-tight sm:text-3xl">
                   {editingId ? "Edit Entry" : `Add ${title.slice(0, -1)}`}
                 </h2>
               </div>
@@ -216,11 +277,11 @@ export function EntityManager({
                 onClick={resetForm}
                 className="rounded-full p-2 hover:bg-white/10 transition"
               >
-                <Trash2 className="h-4 w-4 opacity-0 pointer-events-none" /> {/* Placeholder for visual balance or use an X icon if imported */}
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               {fields.map((field) => (
                 <label key={field.key} className="block">
                   <span className="mb-2 block text-xs uppercase tracking-[0.2em] text-white/50">{field.label}</span>
@@ -233,14 +294,17 @@ export function EntityManager({
                       }
                     />
                   ) : field.type === "boolean" ? (
-                    <input
-                      checked={Boolean(form[field.key])}
-                      className="h-5 w-5 rounded border-white/20 bg-white/5 accent-accent"
-                      type="checkbox"
-                      onChange={(event) =>
-                        setForm((current) => ({ ...current, [field.key]: event.target.checked }))
-                      }
-                    />
+                    <span className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                      <input
+                        checked={Boolean(form[field.key])}
+                        className="h-5 w-5 rounded border-white/20 bg-white/5 accent-accent"
+                        type="checkbox"
+                        onChange={(event) =>
+                          setForm((current) => ({ ...current, [field.key]: event.target.checked }))
+                        }
+                      />
+                      <span className="text-sm text-white/75">Enabled</span>
+                    </span>
                   ) : field.type === "select" ? (
                     <select
                       className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none transition focus:border-accent"
@@ -273,7 +337,7 @@ export function EntityManager({
 
             {message ? <p className="mt-4 text-sm text-white/70">{message}</p> : null}
 
-            <div className="mt-8 flex gap-3">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 className="rounded-full bg-accent flex-1 px-5 py-3 text-xs uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-ink"
                 disabled={loading}

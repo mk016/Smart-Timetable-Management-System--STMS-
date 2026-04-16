@@ -1,18 +1,31 @@
 import { applyGenerationResult, generateTimetable } from "@/lib/services/scheduler";
-import { AppData, Role, TimetableEntry } from "@/lib/types";
+import {
+  AppData,
+  Batch,
+  ChangeLog,
+  Holiday,
+  Role,
+  Room,
+  Subject,
+  Teacher,
+  TeacherLeave,
+  TimetableEntry,
+  TimeSlot,
+  User
+} from "@/lib/types";
 import { db } from "@/lib/db";
 
 export async function getAppData(options?: { ensureTimetable?: boolean }): Promise<AppData> {
-  const users = await db.user.findMany();
-  const teachers = await db.teacher.findMany();
-  const subjects = await db.subject.findMany();
-  const rooms = await db.room.findMany();
-  const batches = await db.batch.findMany();
-  const slots = await db.timeSlot.findMany();
-  const holidays = await db.holiday.findMany();
-  const leaves = await db.teacherLeave.findMany();
-  const timetableEntries = await db.timetableEntry.findMany();
-  const changeLogs = await db.changeLog.findMany();
+  const users = (await db.user.findMany()) as User[];
+  const teachers = (await db.teacher.findMany()) as Teacher[];
+  const subjects = (await db.subject.findMany()) as Subject[];
+  const rooms = (await db.room.findMany()) as Room[];
+  const batches = (await db.batch.findMany()) as Batch[];
+  const slots = (await db.timeSlot.findMany()) as TimeSlot[];
+  const holidays = (await db.holiday.findMany()) as Holiday[];
+  const leaves = (await db.teacherLeave.findMany()) as TeacherLeave[];
+  const timetableEntries = (await db.timetableEntry.findMany()) as TimetableEntry[];
+  const changeLogs = (await db.changeLog.findMany()) as ChangeLog[];
 
   const data: AppData = {
     users,
