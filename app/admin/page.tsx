@@ -83,14 +83,14 @@ export default async function AdminDashboardPage() {
         })}
       </section>
 
-      {/* Status & AI */}
-      <section className="grid gap-4 lg:grid-cols-2">
+      {/* Status */}
+      <section className="grid gap-4">
         <div className="rounded-2xl border border-ink/8 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-center gap-2.5">
             <Activity className="h-4 w-4 text-accent" />
             <h2 className="text-sm font-bold text-ink">Status Overview</h2>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-xl bg-slate-50 p-3.5">
               <p className="text-[10px] uppercase tracking-widest text-ink/40">Leaves</p>
               <p className="mt-2 text-2xl font-bold text-ink">{data.leaves.length}</p>
@@ -108,20 +108,6 @@ export default async function AdminDashboardPage() {
               <p className="mt-2 text-sm font-medium text-ink">{data.settings.publishedAt || "Not yet"}</p>
             </div>
           </div>
-        </div>
-
-        <div className="rounded-2xl bg-gradient-to-br from-forest to-[#253028] p-4 text-white shadow-lg sm:p-5">
-          <div className="flex items-center gap-2.5">
-            <WandSparkles className="h-4 w-4 text-accent" />
-            <h2 className="text-sm font-bold">AI Endpoints</h2>
-          </div>
-          <ul className="mt-4 space-y-2.5 text-xs leading-relaxed text-white/55">
-            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/validate-dataset` — completeness checks</li>
-            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/explain-conflicts` — conflict summaries</li>
-            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/suggest-slots` — slot ranking</li>
-            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/parse-command` — NL admin actions</li>
-            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/summarize-quality` — quality snapshots</li>
-          </ul>
         </div>
       </section>
     </div>
