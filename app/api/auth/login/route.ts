@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { COOKIE_NAME, createSessionToken } from "@/lib/auth";
-import { readStore } from "@/lib/store";
+import { db } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const data = await readStore();
-  const user = data.users.find(
-    (item) => item.email === body.email && item.password === body.password
-  );
+  const user = await db.user.findFirst({
+    where: { email: body.email, password: body.password }
+  });
 
   if (!user) {
     return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });

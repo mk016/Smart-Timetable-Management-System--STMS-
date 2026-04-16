@@ -13,112 +13,114 @@ export default async function AdminDashboardPage() {
       label: "Teachers",
       value: data.teachers.length,
       hint: "Faculty records live",
-      icon: Users2
+      icon: Users2,
+      color: "from-blue-500 to-blue-600"
     },
     {
       label: "Subjects",
       value: data.subjects.length,
       hint: "Weekly mappings active",
-      icon: GraduationCap
+      icon: GraduationCap,
+      color: "from-emerald-500 to-emerald-600"
     },
     {
-      label: "Timetable Entries",
+      label: "Entries",
       value: data.timetableEntries.length,
-      hint: data.settings.publishedAt ? "Published schedule" : "Draft schedule",
-      icon: CalendarDays
+      hint: data.settings.publishedAt ? "Published" : "Draft",
+      icon: CalendarDays,
+      color: "from-violet-500 to-violet-600"
     },
     {
       label: "Conflicts",
       value: conflicts.length,
-      hint: conflicts.length ? "Need admin review" : "All clear",
-      icon: ShieldCheck
+      hint: conflicts.length ? "Need review" : "All clear",
+      icon: ShieldCheck,
+      color: conflicts.length ? "from-red-500 to-red-600" : "from-emerald-500 to-emerald-600"
     }
   ];
 
   return (
-    <div className="space-y-8">
-      <section className="rounded-[2rem] bg-forest px-4 py-6 text-white shadow-halo sm:px-8 sm:py-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-accent">Admin Dashboard</p>
-        <h1 className="mt-3 text-balance font-serif text-3xl uppercase tracking-tight sm:text-5xl">
-          Run The Full <span className="text-accent">Scheduling Operation</span>
+    <div className="space-y-5">
+      {/* Hero */}
+      <section className="rounded-2xl bg-gradient-to-br from-forest to-[#253028] px-5 py-6 text-white shadow-lg sm:px-7 sm:py-8">
+        <p className="text-[10px] uppercase tracking-widest text-accent">Admin Dashboard</p>
+        <h1 className="mt-2 text-2xl font-bold sm:text-3xl lg:text-4xl">
+          Scheduling <span className="text-accent">Operations</span>
         </h1>
-        <p className="mt-6 max-w-3xl text-sm leading-7 text-white/65">
-          PRD ke core modules yahan se accessible hain: master data setup, timetable generation, validation,
-          leave/holiday control, export aur AI assistance.
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/55">
+          Master data setup, timetable generation, validation, leave/holiday control, export aur AI assistance.
         </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <Link href="/admin/timetable" className="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-xs uppercase tracking-[0.2em] text-forest transition hover:bg-accent hover:text-white">
+        <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
+          <Link
+            href="/admin/timetable"
+            className="inline-flex items-center justify-center rounded-xl bg-accent px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition hover:bg-white hover:text-ink"
+          >
             Open Timetable
           </Link>
-          <Link href="/admin/teachers" className="inline-flex items-center justify-center rounded-full border border-white/15 px-5 py-3 text-xs uppercase tracking-[0.2em] text-white transition hover:border-accent hover:text-accent">
-            Manage Teachers
+          <Link
+            href="/admin/teachers"
+            className="inline-flex items-center justify-center rounded-xl border border-white/15 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition hover:border-accent hover:text-accent"
+          >
+            Teachers
           </Link>
         </div>
       </section>
 
-      <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      {/* Stat Cards */}
+      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {cards.map((card) => {
           const Icon = card.icon;
           return (
-            <div key={card.label} className="rounded-[2rem] border border-ink/10 bg-white p-5 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-accent">
-                <Icon className="h-5 w-5" />
+            <div key={card.label} className="rounded-2xl border border-ink/8 bg-white p-4 shadow-sm sm:p-5">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${card.color} text-white`}>
+                <Icon className="h-4 w-4" />
               </div>
-              <p className="mt-6 text-xs uppercase tracking-[0.2em] text-ink/45">{card.label}</p>
-              <p className="mt-3 text-3xl text-ink sm:text-5xl">{card.value}</p>
-              <p className="mt-2 text-sm text-ink/55">{card.hint}</p>
+              <p className="mt-3 text-[10px] uppercase tracking-widest text-ink/40">{card.label}</p>
+              <p className="mt-1 text-2xl font-bold text-ink sm:text-3xl">{card.value}</p>
+              <p className="mt-1 text-xs text-ink/45">{card.hint}</p>
             </div>
           );
         })}
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[2rem] border border-ink/10 bg-white p-5 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-6">
-          <div className="flex items-center gap-3">
-            <Activity className="h-5 w-5 text-accent" />
-            <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-accent">Current Status</p>
-              <h2 className="font-serif text-2xl uppercase tracking-tight text-ink sm:text-3xl">
-                Operational Snapshot
-              </h2>
-            </div>
+      {/* Status & AI */}
+      <section className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-ink/8 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex items-center gap-2.5">
+            <Activity className="h-4 w-4 text-accent" />
+            <h2 className="text-sm font-bold text-ink">Status Overview</h2>
           </div>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <div className="rounded-3xl bg-canvas/70 p-5">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Leaves</p>
-              <p className="mt-3 text-3xl text-ink sm:text-4xl">{data.leaves.length}</p>
-              <p className="mt-2 text-sm text-ink/55">Teacher unavailability records stored</p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="rounded-xl bg-slate-50 p-3.5">
+              <p className="text-[10px] uppercase tracking-widest text-ink/40">Leaves</p>
+              <p className="mt-2 text-2xl font-bold text-ink">{data.leaves.length}</p>
             </div>
-            <div className="rounded-3xl bg-canvas/70 p-5">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Holidays</p>
-              <p className="mt-3 text-3xl text-ink sm:text-4xl">{data.holidays.length}</p>
-              <p className="mt-2 text-sm text-ink/55">Academic closures tracked</p>
+            <div className="rounded-xl bg-slate-50 p-3.5">
+              <p className="text-[10px] uppercase tracking-widest text-ink/40">Holidays</p>
+              <p className="mt-2 text-2xl font-bold text-ink">{data.holidays.length}</p>
             </div>
-            <div className="rounded-3xl bg-canvas/70 p-5">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Last Generated</p>
-              <p className="mt-3 text-lg text-ink">{data.settings.lastGeneratedAt || "Auto-seeded on demand"}</p>
+            <div className="rounded-xl bg-slate-50 p-3.5">
+              <p className="text-[10px] uppercase tracking-widest text-ink/40">Generated</p>
+              <p className="mt-2 text-sm font-medium text-ink">{data.settings.lastGeneratedAt || "On demand"}</p>
             </div>
-            <div className="rounded-3xl bg-canvas/70 p-5">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Published</p>
-              <p className="mt-3 text-lg text-ink">{data.settings.publishedAt || "Not published yet"}</p>
+            <div className="rounded-xl bg-slate-50 p-3.5">
+              <p className="text-[10px] uppercase tracking-widest text-ink/40">Published</p>
+              <p className="mt-2 text-sm font-medium text-ink">{data.settings.publishedAt || "Not yet"}</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-white/10 bg-forest p-5 text-white shadow-halo sm:p-6">
-          <div className="flex items-center gap-3">
-            <WandSparkles className="h-5 w-5 text-accent" />
-            <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-accent">AI Layer</p>
-              <h2 className="font-serif text-2xl uppercase tracking-tight sm:text-3xl">Groq-Ready Endpoints</h2>
-            </div>
+        <div className="rounded-2xl bg-gradient-to-br from-forest to-[#253028] p-4 text-white shadow-lg sm:p-5">
+          <div className="flex items-center gap-2.5">
+            <WandSparkles className="h-4 w-4 text-accent" />
+            <h2 className="text-sm font-bold">AI Endpoints</h2>
           </div>
-          <ul className="mt-6 space-y-4 text-sm leading-7 text-white/65">
-            <li>`/api/ai/validate-dataset` for completeness checks</li>
-            <li>`/api/ai/explain-conflicts` for human-readable conflict summaries</li>
-            <li>`/api/ai/suggest-slots` for alternate slot ranking</li>
-            <li>`/api/ai/parse-command` for natural language admin actions</li>
-            <li>`/api/ai/summarize-quality` for schedule quality snapshots</li>
+          <ul className="mt-4 space-y-2.5 text-xs leading-relaxed text-white/55">
+            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/validate-dataset` — completeness checks</li>
+            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/explain-conflicts` — conflict summaries</li>
+            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/suggest-slots` — slot ranking</li>
+            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/parse-command` — NL admin actions</li>
+            <li className="rounded-lg bg-white/5 px-3 py-2">`/api/ai/summarize-quality` — quality snapshots</li>
           </ul>
         </div>
       </section>

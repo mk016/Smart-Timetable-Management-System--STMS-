@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
@@ -20,88 +20,136 @@ export function Chatbot() {
 
   return (
     <>
+      {/* Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white shadow-[0_12px_30px_-5px_rgba(75,163,227,0.5)] transition hover:scale-105 active:scale-95 sm:bottom-6 sm:right-6 sm:h-14 sm:w-14",
-          isOpen && "pointer-events-none opacity-0"
+          "fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-accent to-blue-600 text-white shadow-[0_8px_30px_-5px_rgba(75,163,227,0.5)] transition-all hover:scale-110 hover:shadow-[0_12px_40px_-5px_rgba(75,163,227,0.6)] active:scale-95 sm:bottom-6 sm:right-6 sm:h-14 sm:w-14",
+          isOpen && "pointer-events-none opacity-0 scale-0"
         )}
       >
-        <MessageCircle className="h-6 w-6" />
+        <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
       </button>
 
+      {/* Chat Panel */}
       {isOpen && (
-        <div className="fixed inset-x-3 bottom-3 top-20 z-50 flex flex-col overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] sm:inset-x-auto sm:bottom-6 sm:right-6 sm:top-auto sm:h-[min(600px,calc(100dvh-3rem))] sm:w-[380px] sm:max-w-[calc(100vw-3rem)] sm:rounded-[2rem]">
-          <div className="flex items-center justify-between border-b border-ink/10 bg-forest px-5 py-4 text-white">
+        <div className={cn(
+          "fixed z-50 flex flex-col overflow-hidden bg-white shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)]",
+          // Mobile: full screen
+          "inset-0",
+          // Desktop: floating panel
+          "sm:inset-auto sm:bottom-5 sm:right-5 sm:h-[min(560px,calc(100dvh-2.5rem))] sm:w-[380px] sm:rounded-2xl sm:border sm:border-ink/10"
+        )}>
+          {/* Header */}
+          <div className="flex items-center justify-between bg-gradient-to-r from-forest to-[#253028] px-4 py-3.5 text-white">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/20">
-                <MessageCircle className="h-4 w-4 text-accent" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/20 ring-2 ring-accent/30">
+                <Bot className="h-4 w-4 text-accent" />
               </div>
               <div>
-                <h3 className="font-serif text-sm uppercase tracking-wider">STMS Assistant</h3>
-                <p className="text-[10px] text-white/50 uppercase tracking-widest">Powered by Groq</p>
+                <h3 className="text-sm font-bold">STMS Assistant</h3>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <p className="text-[10px] text-white/50">Online • Powered by AI</p>
+                </div>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="rounded-full p-2 transition hover:bg-white/10">
+            <button onClick={() => setIsOpen(false)} className="rounded-lg p-2 transition hover:bg-white/10">
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="flex-1 space-y-4 overflow-y-auto bg-canvas/30 p-4 sm:p-5">
-            {messages.length === 0 ? (
-              <div className="mt-10 text-center text-sm text-ink/50">
-                Hi! Ask me to fix a schedule conflict, or generate alternative slots without overlaps.
+          {/* Messages */}
+          <div className="flex-1 space-y-3 overflow-y-auto bg-gradient-to-b from-slate-50 to-white p-4">
+            {messages.length === 0 && (
+              <div className="mt-16 flex flex-col items-center text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10">
+                  <Bot className="h-7 w-7 text-accent" />
+                </div>
+                <p className="mt-4 text-sm font-semibold text-ink/70">Hi! I'm your STMS Assistant</p>
+                <p className="mt-2 max-w-[250px] text-xs text-ink/40 leading-relaxed">
+                  Ask me to fix schedule conflicts, suggest alternative slots, or explain timetable issues.
+                </p>
+                <div className="mt-5 flex flex-wrap justify-center gap-2">
+                  {["Show conflicts", "Suggest slots", "Quality check"].map((q) => (
+                    <button
+                      key={q}
+                      className="rounded-full border border-ink/10 bg-white px-3 py-1.5 text-[11px] font-medium text-ink/50 transition hover:border-accent hover:text-accent"
+                      type="button"
+                      onClick={() => {
+                        const fakeEvent = { target: { value: q } } as React.ChangeEvent<HTMLInputElement>;
+                        handleInputChange(fakeEvent);
+                      }}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
               </div>
-            ) : null}
+            )}
+
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={cn(
-                  "flex",
-                  message.role === "user" ? "justify-end" : "justify-start"
-                )}
+                className={cn("flex gap-2.5", message.role === "user" ? "justify-end" : "justify-start")}
               >
+                {message.role !== "user" && (
+                  <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10">
+                    <Bot className="h-3.5 w-3.5 text-accent" />
+                  </div>
+                )}
                 <div
                   className={cn(
-                    "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
+                    "max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
                     message.role === "user"
-                      ? "bg-accent text-white rounded-br-sm"
-                      : "bg-white border border-ink/10 text-ink rounded-bl-sm shadow-sm"
+                      ? "bg-gradient-to-br from-accent to-blue-600 text-white rounded-br-md"
+                      : "bg-white border border-ink/8 text-ink/80 rounded-bl-md shadow-sm"
                   )}
                 >
                   <div className="whitespace-pre-wrap break-words">
-                    {message.content || (message.toolInvocations && "Calling tools...")}
+                    {message.content || (message.toolInvocations && "Processing...")}
                   </div>
                 </div>
+                {message.role === "user" && (
+                  <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/10">
+                    <User className="h-3.5 w-3.5 text-ink/50" />
+                  </div>
+                )}
               </div>
             ))}
+
             {isLoading && (
-              <div className="flex justify-start">
-                <div className="max-w-[85%] rounded-2xl rounded-bl-sm border border-ink/10 bg-white px-4 py-3 text-sm text-ink/50 shadow-sm">
-                  Thinking...
+              <div className="flex gap-2.5">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10">
+                  <Bot className="h-3.5 w-3.5 text-accent" />
+                </div>
+                <div className="rounded-2xl rounded-bl-md border border-ink/8 bg-white px-4 py-3 shadow-sm">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-ink/20 animate-bounce [animation-delay:0ms]" />
+                    <span className="h-2 w-2 rounded-full bg-ink/20 animate-bounce [animation-delay:150ms]" />
+                    <span className="h-2 w-2 rounded-full bg-ink/20 animate-bounce [animation-delay:300ms]" />
+                  </div>
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="border-t border-ink/10 bg-white p-4"
-          >
-            <div className="flex items-center gap-2 rounded-full border border-ink/15 bg-canvas/30 py-1.5 pl-4 pr-2 transition focus-within:border-accent focus-within:ring-1 focus-within:ring-accent">
+          {/* Input */}
+          <form onSubmit={handleSubmit} className="border-t border-ink/8 bg-white p-3 sm:p-4">
+            <div className="flex items-center gap-2 rounded-xl border border-ink/10 bg-slate-50/80 py-1 pl-3.5 pr-1 transition-all focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20">
               <input
                 value={input}
                 onChange={handleInputChange}
                 placeholder="Ask STMS AI..."
-                className="flex-1 bg-transparent text-sm text-ink outline-none"
+                className="flex-1 bg-transparent py-2 text-sm text-ink outline-none placeholder:text-ink/30"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-forest text-white transition disabled:opacity-50"
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-blue-600 text-white transition-all hover:shadow-md disabled:opacity-30"
               >
-                <Send className="h-3 w-3" />
+                <Send className="h-3.5 w-3.5" />
               </button>
             </div>
           </form>

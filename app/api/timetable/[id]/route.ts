@@ -3,7 +3,8 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireApiRole } from "@/lib/api-helpers";
-import { readStore, writeStore } from "@/lib/store";
+import { getAppData } from "@/lib/app-data";
+import { db } from "@/lib/db";
 import { validateTimetable } from "@/lib/services/scheduler";
 import { AppData, TimetableEntry } from "@/lib/types";
 import { nowIso } from "@/lib/utils";
@@ -33,7 +34,7 @@ export async function PATCH(
 
   const { id } = await context.params;
   const body = await request.json();
-  const data = await readStore();
+  const data = await getAppData();
   const entry = data.timetableEntries.find((item) => item.id === id);
 
   if (!entry) {
@@ -104,33 +105,42 @@ export async function PATCH(
     );
   }
 
-  const updated = {
-    ...data,
-    timetableEntries: chosenEntries,
-    changeLogs: [
-      {
-        id: `log-${crypto.randomUUID().slice(0, 8)}`,
-        timetableEntryId: id,
-        changedBy: "admin",
-        oldValue: JSON.stringify(entry),
-        newValue: JSON.stringify(
-          chosenEntries.find((item) => item.id === id)
-        ),
-        changeType: "manual_update",
-        timestamp: nowIso()
-      },
-      ...data.changeLogs
-    ]
-  };
+  const updatedEntry = chosenEntries.find((item) => item.id === id)!;
 
-  await writeStore(updated);
+  // Save updated entry to DB
+  await db.timetableEntry.update({
+    where: { id },
+    data: {
+      dayOfWeek: updatedEntry.dayOfWeek,
+      roomId: updatedEntry.roomId,
+      teacherId: updatedEntry.teacherId,
+      isLocked: updatedEntry.isLocked,
+      source: updatedEntry.source,
+      slotIndexes: updatedEntry.slotIndexes
+    }
+  });
+
+  // Save change log to DB
+  await db.changeLog.create({
+    data: {
+      id: `log-${crypto.randomUUID().slice(0, 8)}`,
+      timetableEntryId: id,
+      changedBy: "admin",
+      oldValue: JSON.stringify(entry),
+      newValue: JSON.stringify(updatedEntry),
+      changeType: "manual_update",
+      timestamp: nowIso()
+    }
+  });
+
+  const freshData = await getAppData();
 
   return NextResponse.json({
     message:
       chosenRoomId !== entry.roomId
         ? "Timetable slot updated and room auto-adjusted to keep it conflict-free."
         : "Timetable slot updated.",
-    data: updated,
+    data: freshData,
     conflicts: []
   });
 }

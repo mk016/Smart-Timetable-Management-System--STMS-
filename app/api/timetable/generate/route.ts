@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireApiRole } from "@/lib/api-helpers";
-import { readStore, writeStore } from "@/lib/store";
+import { getAppData } from "@/lib/app-data";
+import { db } from "@/lib/db";
 import { applyGenerationResult, generateTimetable } from "@/lib/services/scheduler";
 
 export async function POST(request: NextRequest) {
@@ -10,10 +11,15 @@ export async function POST(request: NextRequest) {
     return blocked;
   }
 
-  const data = await readStore();
+  const data = await getAppData();
   const result = generateTimetable(data);
   const updated = applyGenerationResult(data, result);
-  await writeStore(updated);
+
+  // Save generated entries to database
+  await db.$transaction([
+    db.timetableEntry.deleteMany(),
+    db.timetableEntry.createMany({ data: updated.timetableEntries })
+  ]);
 
   return NextResponse.json({
     message: result.unplaced.length
