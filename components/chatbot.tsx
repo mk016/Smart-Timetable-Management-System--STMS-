@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: "/api/chat",
+    maxSteps: 5,
+    onError: (err) => console.error("Chat API Error:", err),
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 

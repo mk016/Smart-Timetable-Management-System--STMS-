@@ -144,3 +144,33 @@ export async function PATCH(
     conflicts: []
   });
 }
+
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const blocked = requireApiRole(request, ["admin"]);
+  if (blocked) return blocked;
+
+  const { id } = await context.params;
+
+  try {
+    await db.timetableEntry.delete({
+      where: { id }
+    });
+
+    // You could also log this deletion in changeLog if needed
+
+    const freshData = await getAppData();
+
+    return NextResponse.json({
+      message: "Class deleted successfully.",
+      data: freshData
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete from database" },
+      { status: 500 }
+    );
+  }
+}

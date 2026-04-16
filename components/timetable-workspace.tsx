@@ -71,6 +71,8 @@ export function TimetableWorkspace({
   const [editingEntry, setEditingEntry] = useState<TimetableEntry | null>(null);
   const [showHolidayModal, setShowHolidayModal] = useState(false);
   const [showConflictsModal, setShowConflictsModal] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [generatePrompt, setGeneratePrompt] = useState("");
   const [addingSlot, setAddingSlot] = useState<{ dayOfWeek: WeekDay; slotStart: number } | null>(null);
   const [addForm, setAddForm] = useState({ batchId: "", subjectId: "", teacherId: "", roomId: "" });
   const [editForm, setEditForm] = useState({ teacherId: "", roomId: "", dayOfWeek: "", slotStart: "" });
@@ -562,12 +564,7 @@ export function TimetableWorkspace({
                 <button
                   className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-medium text-white transition hover:bg-ink hover:text-white"
                   type="button"
-                  onClick={() =>
-                    mutateAction("generate", async () => {
-                      const response = await fetch("/api/timetable/generate", { method: "POST" });
-                      return { ok: response.ok, payload: await response.json() };
-                    }, "Generating AI timetable...")
-                  }
+                  onClick={() => setShowGenerateModal(true)}
                 >
                   <WandSparkles className={cn("h-3.5 w-3.5", loading === "generate" && "animate-spin")} />
                   {loading === "generate" ? "..." : "Auto-Generate"}
@@ -795,8 +792,77 @@ export function TimetableWorkspace({
               <button className="flex-1 rounded-lg bg-accent px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition hover:bg-white hover:text-ink" type="submit" disabled={loading === "edit-entry"}>
                 {loading === "edit-entry" ? "Saving..." : "Save Changes"}
               </button>
+              <button 
+                className="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-red-500 transition hover:bg-red-500 hover:text-white" 
+                type="button" 
+                onClick={async () => {
+                  if(confirm("Are you sure you want to delete this class?")) {
+                    await mutateAction("delete-entry", async () => {
+                      const response = await fetch(`/api/timetable/${editingEntry.id}`, { method: "DELETE" });
+                      return { ok: response.ok, payload: await response.json() };
+                    }, "Deleting class...");
+                    setEditingEntry(null);
+                  }
+                }}
+              >
+                Delete
+              </button>
               <button className="flex-1 rounded-lg border border-white/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white/60 transition hover:text-white" type="button" onClick={() => setEditingEntry(null)}>
                 Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ─── AI Generate Modal ─────────────────────────────── */}
+      {showGenerateModal && !readOnly && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 backdrop-blur-sm sm:p-4" onClick={() => setShowGenerateModal(false)}>
+          <form
+            className="w-full max-w-md rounded-2xl border border-white/10 bg-forest p-5 text-white shadow-2xl sm:rounded-2xl border-t-4 border-t-accent"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setShowGenerateModal(false);
+              await mutateAction("generate", async () => {
+                const response = await fetch("/api/timetable/generate", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ prompt: generatePrompt })
+                });
+                return { ok: response.ok, payload: await response.json() };
+              }, "Generating AI timetable...");
+              setGeneratePrompt("");
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <WandSparkles className="h-5 w-5 text-accent" />
+                  Auto-Generate Context
+                </h2>
+                <p className="mt-1 text-xs text-white/50">Specify any custom preferences or rules for the AI.</p>
+              </div>
+              <button type="button" onClick={() => setShowGenerateModal(false)} className="rounded-lg p-2 hover:bg-white/10 transition">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40">Instructions (Optional)</span>
+                <textarea
+                  className="mt-1 min-h-[100px] w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm outline-none placeholder:text-white/20 focus:border-accent"
+                  placeholder="e.g., Prioritize morning slots for Math, avoid consecutive 3-hour classes..."
+                  value={generatePrompt}
+                  onChange={(e) => setGeneratePrompt(e.target.value)}
+                />
+              </label>
+            </div>
+
+            <div className="mt-5 flex gap-3">
+              <button className="flex-1 rounded-lg bg-accent px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition hover:bg-white hover:text-ink" type="submit">
+                Generate Schedule
               </button>
             </div>
           </form>
