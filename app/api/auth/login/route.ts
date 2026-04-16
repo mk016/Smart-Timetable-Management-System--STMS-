@@ -15,9 +15,9 @@ export async function POST(request: NextRequest) {
 
   const session = createSessionToken({
     userId: user.id,
-    role: user.role,
+    role: user.role as import("@/lib/types").Role,
     name: user.name,
-    linkedId: user.linkedId
+    linkedId: user.linkedId || undefined
   });
 
   const response = NextResponse.json({
