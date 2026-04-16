@@ -1,0 +1,984 @@
+{
+  "users": [
+    {
+      "id": "u-admin",
+      "name": "STMS Admin",
+      "email": "admin@stms.local",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "id": "u-teacher",
+      "name": "Anita Sharma",
+      "email": "teacher@stms.local",
+      "password": "teacher123",
+      "role": "teacher",
+      "linkedId": "t-01"
+    },
+    {
+      "id": "u-student",
+      "name": "BCA 1st Year A",
+      "email": "student@stms.local",
+      "password": "student123",
+      "role": "student",
+      "linkedId": "b-01"
+    }
+  ],
+  "teachers": [
+    {
+      "id": "t-01",
+      "name": "Anita Sharma",
+      "teacherCode": "CSE-101",
+      "department": "Computer Science",
+      "maxDailyLoad": 4,
+      "availableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "preferredSlots": [
+        1,
+        2,
+        3
+      ],
+      "subjectIds": [
+        "s-02",
+        "s-03",
+        "s-07"
+      ],
+      "active": true
+    },
+    {
+      "id": "t-02",
+      "name": "Ravi Mehta",
+      "teacherCode": "CSE-102",
+      "department": "Computer Science",
+      "maxDailyLoad": 4,
+      "availableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "preferredSlots": [
+        2,
+        3,
+        4
+      ],
+      "subjectIds": [
+        "s-05",
+        "s-06",
+        "s-08"
+      ],
+      "active": true
+    },
+    {
+      "id": "t-03",
+      "name": "Neha Iyer",
+      "teacherCode": "ECE-210",
+      "department": "Electronics",
+      "maxDailyLoad": 3,
+      "availableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday"
+      ],
+      "preferredSlots": [
+        1,
+        2,
+        5
+      ],
+      "subjectIds": [
+        "s-04"
+      ],
+      "active": true
+    },
+    {
+      "id": "t-04",
+      "name": "Karan Singh",
+      "teacherCode": "MAT-115",
+      "department": "Applied Mathematics",
+      "maxDailyLoad": 4,
+      "availableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "preferredSlots": [
+        1,
+        2
+      ],
+      "subjectIds": [
+        "s-01"
+      ],
+      "active": true
+    }
+  ],
+  "subjects": [
+    {
+      "id": "s-01",
+      "subjectCode": "MTH101",
+      "subjectName": "Mathematics I",
+      "type": "theory",
+      "weeklySessions": 4,
+      "durationSlots": 1,
+      "teacherIds": [
+        "t-04"
+      ],
+      "batchIds": [
+        "b-01"
+      ]
+    },
+    {
+      "id": "s-02",
+      "subjectCode": "PFC101",
+      "subjectName": "Programming Fundamentals",
+      "type": "theory",
+      "weeklySessions": 3,
+      "durationSlots": 1,
+      "teacherIds": [
+        "t-01"
+      ],
+      "batchIds": [
+        "b-01"
+      ]
+    },
+    {
+      "id": "s-03",
+      "subjectCode": "PFL102",
+      "subjectName": "Programming Lab",
+      "type": "lab",
+      "weeklySessions": 1,
+      "durationSlots": 2,
+      "teacherIds": [
+        "t-01"
+      ],
+      "batchIds": [
+        "b-01"
+      ]
+    },
+    {
+      "id": "s-04",
+      "subjectCode": "DLD120",
+      "subjectName": "Digital Logic",
+      "type": "theory",
+      "weeklySessions": 3,
+      "durationSlots": 1,
+      "teacherIds": [
+        "t-03"
+      ],
+      "batchIds": [
+        "b-01"
+      ]
+    },
+    {
+      "id": "s-05",
+      "subjectCode": "DBS201",
+      "subjectName": "DBMS",
+      "type": "theory",
+      "weeklySessions": 3,
+      "durationSlots": 1,
+      "teacherIds": [
+        "t-02"
+      ],
+      "batchIds": [
+        "b-02"
+      ]
+    },
+    {
+      "id": "s-06",
+      "subjectCode": "DST202",
+      "subjectName": "Data Structures",
+      "type": "theory",
+      "weeklySessions": 4,
+      "durationSlots": 1,
+      "teacherIds": [
+        "t-02"
+      ],
+      "batchIds": [
+        "b-02"
+      ]
+    },
+    {
+      "id": "s-07",
+      "subjectCode": "WDT203",
+      "subjectName": "Web Development",
+      "type": "theory",
+      "weeklySessions": 3,
+      "durationSlots": 1,
+      "teacherIds": [
+        "t-01"
+      ],
+      "batchIds": [
+        "b-02"
+      ]
+    },
+    {
+      "id": "s-08",
+      "subjectCode": "DBL204",
+      "subjectName": "Database Lab",
+      "type": "lab",
+      "weeklySessions": 1,
+      "durationSlots": 2,
+      "teacherIds": [
+        "t-02"
+      ],
+      "batchIds": [
+        "b-02"
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "id": "r-01",
+      "roomName": "Room 101",
+      "roomType": "classroom",
+      "capacity": 60,
+      "equipmentTags": [
+        "projector"
+      ],
+      "usableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "r-02",
+      "roomName": "Room 202",
+      "roomType": "classroom",
+      "capacity": 60,
+      "equipmentTags": [
+        "projector",
+        "smart-board"
+      ],
+      "usableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "r-03",
+      "roomName": "Computer Lab A",
+      "roomType": "lab",
+      "capacity": 60,
+      "equipmentTags": [
+        "desktop",
+        "network"
+      ],
+      "usableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    {
+      "id": "r-04",
+      "roomName": "Innovation Lab",
+      "roomType": "lab",
+      "capacity": 50,
+      "equipmentTags": [
+        "kits",
+        "iot",
+        "projector"
+      ],
+      "usableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    }
+  ],
+  "batches": [
+    {
+      "id": "b-01",
+      "batchName": "BCA 1st Year",
+      "section": "A",
+      "department": "Computer Applications",
+      "semester": "Semester 1",
+      "strength": 54,
+      "requiredSubjectIds": [
+        "s-01",
+        "s-02",
+        "s-03",
+        "s-04"
+      ]
+    },
+    {
+      "id": "b-02",
+      "batchName": "BCA 2nd Year",
+      "section": "A",
+      "department": "Computer Applications",
+      "semester": "Semester 3",
+      "strength": 48,
+      "requiredSubjectIds": [
+        "s-05",
+        "s-06",
+        "s-07",
+        "s-08"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "monday-1",
+      "dayOfWeek": "Monday",
+      "slotIndex": 1,
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "active": true
+    },
+    {
+      "id": "monday-2",
+      "dayOfWeek": "Monday",
+      "slotIndex": 2,
+      "startTime": "10:05",
+      "endTime": "11:05",
+      "active": true
+    },
+    {
+      "id": "monday-3",
+      "dayOfWeek": "Monday",
+      "slotIndex": 3,
+      "startTime": "11:15",
+      "endTime": "12:15",
+      "active": true
+    },
+    {
+      "id": "monday-4",
+      "dayOfWeek": "Monday",
+      "slotIndex": 4,
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "active": true
+    },
+    {
+      "id": "monday-5",
+      "dayOfWeek": "Monday",
+      "slotIndex": 5,
+      "startTime": "14:05",
+      "endTime": "15:05",
+      "active": true
+    },
+    {
+      "id": "monday-6",
+      "dayOfWeek": "Monday",
+      "slotIndex": 6,
+      "startTime": "15:10",
+      "endTime": "16:10",
+      "active": true
+    },
+    {
+      "id": "tuesday-1",
+      "dayOfWeek": "Tuesday",
+      "slotIndex": 1,
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "active": true
+    },
+    {
+      "id": "tuesday-2",
+      "dayOfWeek": "Tuesday",
+      "slotIndex": 2,
+      "startTime": "10:05",
+      "endTime": "11:05",
+      "active": true
+    },
+    {
+      "id": "tuesday-3",
+      "dayOfWeek": "Tuesday",
+      "slotIndex": 3,
+      "startTime": "11:15",
+      "endTime": "12:15",
+      "active": true
+    },
+    {
+      "id": "tuesday-4",
+      "dayOfWeek": "Tuesday",
+      "slotIndex": 4,
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "active": true
+    },
+    {
+      "id": "tuesday-5",
+      "dayOfWeek": "Tuesday",
+      "slotIndex": 5,
+      "startTime": "14:05",
+      "endTime": "15:05",
+      "active": true
+    },
+    {
+      "id": "tuesday-6",
+      "dayOfWeek": "Tuesday",
+      "slotIndex": 6,
+      "startTime": "15:10",
+      "endTime": "16:10",
+      "active": true
+    },
+    {
+      "id": "wednesday-1",
+      "dayOfWeek": "Wednesday",
+      "slotIndex": 1,
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "active": true
+    },
+    {
+      "id": "wednesday-2",
+      "dayOfWeek": "Wednesday",
+      "slotIndex": 2,
+      "startTime": "10:05",
+      "endTime": "11:05",
+      "active": true
+    },
+    {
+      "id": "wednesday-3",
+      "dayOfWeek": "Wednesday",
+      "slotIndex": 3,
+      "startTime": "11:15",
+      "endTime": "12:15",
+      "active": true
+    },
+    {
+      "id": "wednesday-4",
+      "dayOfWeek": "Wednesday",
+      "slotIndex": 4,
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "active": true
+    },
+    {
+      "id": "wednesday-5",
+      "dayOfWeek": "Wednesday",
+      "slotIndex": 5,
+      "startTime": "14:05",
+      "endTime": "15:05",
+      "active": true
+    },
+    {
+      "id": "wednesday-6",
+      "dayOfWeek": "Wednesday",
+      "slotIndex": 6,
+      "startTime": "15:10",
+      "endTime": "16:10",
+      "active": true
+    },
+    {
+      "id": "thursday-1",
+      "dayOfWeek": "Thursday",
+      "slotIndex": 1,
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "active": true
+    },
+    {
+      "id": "thursday-2",
+      "dayOfWeek": "Thursday",
+      "slotIndex": 2,
+      "startTime": "10:05",
+      "endTime": "11:05",
+      "active": true
+    },
+    {
+      "id": "thursday-3",
+      "dayOfWeek": "Thursday",
+      "slotIndex": 3,
+      "startTime": "11:15",
+      "endTime": "12:15",
+      "active": true
+    },
+    {
+      "id": "thursday-4",
+      "dayOfWeek": "Thursday",
+      "slotIndex": 4,
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "active": true
+    },
+    {
+      "id": "thursday-5",
+      "dayOfWeek": "Thursday",
+      "slotIndex": 5,
+      "startTime": "14:05",
+      "endTime": "15:05",
+      "active": true
+    },
+    {
+      "id": "thursday-6",
+      "dayOfWeek": "Thursday",
+      "slotIndex": 6,
+      "startTime": "15:10",
+      "endTime": "16:10",
+      "active": true
+    },
+    {
+      "id": "friday-1",
+      "dayOfWeek": "Friday",
+      "slotIndex": 1,
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "active": true
+    },
+    {
+      "id": "friday-2",
+      "dayOfWeek": "Friday",
+      "slotIndex": 2,
+      "startTime": "10:05",
+      "endTime": "11:05",
+      "active": true
+    },
+    {
+      "id": "friday-3",
+      "dayOfWeek": "Friday",
+      "slotIndex": 3,
+      "startTime": "11:15",
+      "endTime": "12:15",
+      "active": true
+    },
+    {
+      "id": "friday-4",
+      "dayOfWeek": "Friday",
+      "slotIndex": 4,
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "active": true
+    },
+    {
+      "id": "friday-5",
+      "dayOfWeek": "Friday",
+      "slotIndex": 5,
+      "startTime": "14:05",
+      "endTime": "15:05",
+      "active": true
+    },
+    {
+      "id": "friday-6",
+      "dayOfWeek": "Friday",
+      "slotIndex": 6,
+      "startTime": "15:10",
+      "endTime": "16:10",
+      "active": true
+    }
+  ],
+  "holidays": [
+    {
+      "id": "h-d005eaeb",
+      "holidayDate": "",
+      "holidayName": "",
+      "fullDay": true
+    },
+    {
+      "id": "h-30c7cd17",
+      "holidayDate": "",
+      "holidayName": "",
+      "fullDay": true
+    },
+    {
+      "id": "h-5aaf25a5",
+      "holidayDate": "",
+      "holidayName": "",
+      "fullDay": true
+    },
+    {
+      "id": "h-6eacbc19",
+      "holidayDate": "",
+      "holidayName": "",
+      "fullDay": true
+    },
+    {
+      "id": "h-5974f93f",
+      "holidayDate": "",
+      "holidayName": "asdf",
+      "fullDay": true
+    },
+    {
+      "id": "h-01",
+      "holidayDate": "2026-08-15",
+      "holidayName": "Independence Day",
+      "fullDay": true
+    }
+  ],
+  "leaves": [
+    {
+      "id": "l-01",
+      "teacherId": "t-02",
+      "leaveDate": "2026-08-18",
+      "reason": "Faculty development workshop"
+    }
+  ],
+  "timetableEntries": [
+    {
+      "id": "tt-s-08-b-02-1",
+      "batchId": "b-02",
+      "subjectId": "s-08",
+      "teacherId": "t-02",
+      "roomId": "r-04",
+      "dayOfWeek": "Monday",
+      "slotIndexes": [
+        1,
+        2
+      ],
+      "status": "draft",
+      "isLocked": true,
+      "source": "manual"
+    },
+    {
+      "id": "tt-s-03-b-01-1",
+      "batchId": "b-01",
+      "subjectId": "s-03",
+      "teacherId": "t-01",
+      "roomId": "r-03",
+      "dayOfWeek": "Monday",
+      "slotIndexes": [
+        1,
+        2
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-01-b-01-1",
+      "batchId": "b-01",
+      "subjectId": "s-01",
+      "teacherId": "t-04",
+      "roomId": "r-01",
+      "dayOfWeek": "Tuesday",
+      "slotIndexes": [
+        1
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-01-b-01-2",
+      "batchId": "b-01",
+      "subjectId": "s-01",
+      "teacherId": "t-04",
+      "roomId": "r-01",
+      "dayOfWeek": "Wednesday",
+      "slotIndexes": [
+        1
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-01-b-01-3",
+      "batchId": "b-01",
+      "subjectId": "s-01",
+      "teacherId": "t-04",
+      "roomId": "r-01",
+      "dayOfWeek": "Tuesday",
+      "slotIndexes": [
+        2
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-01-b-01-4",
+      "batchId": "b-01",
+      "subjectId": "s-01",
+      "teacherId": "t-04",
+      "roomId": "r-01",
+      "dayOfWeek": "Thursday",
+      "slotIndexes": [
+        1
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-02-b-01-1",
+      "batchId": "b-01",
+      "subjectId": "s-02",
+      "teacherId": "t-01",
+      "roomId": "r-01",
+      "dayOfWeek": "Monday",
+      "slotIndexes": [
+        3
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-02-b-01-2",
+      "batchId": "b-01",
+      "subjectId": "s-02",
+      "teacherId": "t-01",
+      "roomId": "r-01",
+      "dayOfWeek": "Wednesday",
+      "slotIndexes": [
+        2
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-02-b-01-3",
+      "batchId": "b-01",
+      "subjectId": "s-02",
+      "teacherId": "t-01",
+      "roomId": "r-01",
+      "dayOfWeek": "Friday",
+      "slotIndexes": [
+        1
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-04-b-01-1",
+      "batchId": "b-01",
+      "subjectId": "s-04",
+      "teacherId": "t-03",
+      "roomId": "r-01",
+      "dayOfWeek": "Monday",
+      "slotIndexes": [
+        5
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-04-b-01-2",
+      "batchId": "b-01",
+      "subjectId": "s-04",
+      "teacherId": "t-03",
+      "roomId": "r-01",
+      "dayOfWeek": "Tuesday",
+      "slotIndexes": [
+        5
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-04-b-01-3",
+      "batchId": "b-01",
+      "subjectId": "s-04",
+      "teacherId": "t-03",
+      "roomId": "r-01",
+      "dayOfWeek": "Thursday",
+      "slotIndexes": [
+        2
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-08-b-02-1",
+      "batchId": "b-02",
+      "subjectId": "s-08",
+      "teacherId": "t-02",
+      "roomId": "r-03",
+      "dayOfWeek": "Tuesday",
+      "slotIndexes": [
+        2,
+        3
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-05-b-02-1",
+      "batchId": "b-02",
+      "subjectId": "s-05",
+      "teacherId": "t-02",
+      "roomId": "r-02",
+      "dayOfWeek": "Monday",
+      "slotIndexes": [
+        3
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-05-b-02-2",
+      "batchId": "b-02",
+      "subjectId": "s-05",
+      "teacherId": "t-02",
+      "roomId": "r-02",
+      "dayOfWeek": "Wednesday",
+      "slotIndexes": [
+        2
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-05-b-02-3",
+      "batchId": "b-02",
+      "subjectId": "s-05",
+      "teacherId": "t-02",
+      "roomId": "r-01",
+      "dayOfWeek": "Tuesday",
+      "slotIndexes": [
+        4
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-06-b-02-1",
+      "batchId": "b-02",
+      "subjectId": "s-06",
+      "teacherId": "t-02",
+      "roomId": "r-02",
+      "dayOfWeek": "Thursday",
+      "slotIndexes": [
+        2
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-06-b-02-2",
+      "batchId": "b-02",
+      "subjectId": "s-06",
+      "teacherId": "t-02",
+      "roomId": "r-01",
+      "dayOfWeek": "Monday",
+      "slotIndexes": [
+        4
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-06-b-02-3",
+      "batchId": "b-02",
+      "subjectId": "s-06",
+      "teacherId": "t-02",
+      "roomId": "r-01",
+      "dayOfWeek": "Wednesday",
+      "slotIndexes": [
+        3
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-06-b-02-4",
+      "batchId": "b-02",
+      "subjectId": "s-06",
+      "teacherId": "t-02",
+      "roomId": "r-01",
+      "dayOfWeek": "Friday",
+      "slotIndexes": [
+        2
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-07-b-02-1",
+      "batchId": "b-02",
+      "subjectId": "s-07",
+      "teacherId": "t-01",
+      "roomId": "r-02",
+      "dayOfWeek": "Tuesday",
+      "slotIndexes": [
+        1
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-07-b-02-2",
+      "batchId": "b-02",
+      "subjectId": "s-07",
+      "teacherId": "t-01",
+      "roomId": "r-02",
+      "dayOfWeek": "Thursday",
+      "slotIndexes": [
+        1
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    },
+    {
+      "id": "tt-s-07-b-02-3",
+      "batchId": "b-02",
+      "subjectId": "s-07",
+      "teacherId": "t-01",
+      "roomId": "r-02",
+      "dayOfWeek": "Wednesday",
+      "slotIndexes": [
+        1
+      ],
+      "status": "draft",
+      "isLocked": false,
+      "source": "auto"
+    }
+  ],
+  "changeLogs": [
+    {
+      "id": "log-76106ddc",
+      "timetableEntryId": "tt-s-08-b-02-1",
+      "changedBy": "admin",
+      "oldValue": "{\"id\":\"tt-s-08-b-02-1\",\"batchId\":\"b-02\",\"subjectId\":\"s-08\",\"teacherId\":\"t-02\",\"roomId\":\"r-04\",\"dayOfWeek\":\"Monday\",\"slotIndexes\":[2,3],\"status\":\"draft\",\"isLocked\":true,\"source\":\"manual\"}",
+      "newValue": "{\"id\":\"tt-s-08-b-02-1\",\"batchId\":\"b-02\",\"subjectId\":\"s-08\",\"teacherId\":\"t-02\",\"roomId\":\"r-04\",\"dayOfWeek\":\"Monday\",\"slotIndexes\":[1,2],\"status\":\"draft\",\"isLocked\":true,\"source\":\"manual\"}",
+      "changeType": "manual_update",
+      "timestamp": "2026-04-16T15:41:36.740Z"
+    },
+    {
+      "id": "log-a78055f8",
+      "timetableEntryId": "tt-s-08-b-02-1",
+      "changedBy": "admin",
+      "oldValue": "{\"id\":\"tt-s-08-b-02-1\",\"batchId\":\"b-02\",\"subjectId\":\"s-08\",\"teacherId\":\"t-02\",\"roomId\":\"r-04\",\"dayOfWeek\":\"Monday\",\"slotIndexes\":[1,2],\"status\":\"draft\",\"isLocked\":true,\"source\":\"manual\"}",
+      "newValue": "{\"id\":\"tt-s-08-b-02-1\",\"batchId\":\"b-02\",\"subjectId\":\"s-08\",\"teacherId\":\"t-02\",\"roomId\":\"r-04\",\"dayOfWeek\":\"Monday\",\"slotIndexes\":[2,3],\"status\":\"draft\",\"isLocked\":true,\"source\":\"manual\"}",
+      "changeType": "manual_update",
+      "timestamp": "2026-04-16T15:41:32.171Z"
+    },
+    {
+      "id": "log-03b012c6",
+      "timetableEntryId": "tt-s-08-b-02-1",
+      "changedBy": "admin",
+      "oldValue": "{\"id\":\"tt-s-08-b-02-1\",\"batchId\":\"b-02\",\"subjectId\":\"s-08\",\"teacherId\":\"t-02\",\"roomId\":\"r-04\",\"dayOfWeek\":\"Monday\",\"slotIndexes\":[2,3],\"status\":\"draft\",\"isLocked\":false,\"source\":\"auto\"}",
+      "newValue": "{\"id\":\"tt-s-08-b-02-1\",\"batchId\":\"b-02\",\"subjectId\":\"s-08\",\"teacherId\":\"t-02\",\"roomId\":\"r-04\",\"dayOfWeek\":\"Monday\",\"slotIndexes\":[1,2],\"status\":\"draft\",\"isLocked\":true,\"source\":\"manual\"}",
+      "changeType": "manual_update",
+      "timestamp": "2026-04-16T15:41:28.408Z"
+    }
+  ],
+  "settings": {
+    "lastGeneratedAt": "2026-04-16T15:53:49.392Z"
+  }
+}

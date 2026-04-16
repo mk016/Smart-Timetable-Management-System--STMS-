@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String
+  linkedId  String?
+}
+
+model Teacher {
+  id             String   @id @default(cuid())
+  name           String
+  teacherCode    String   @unique
+  department     String
+  maxDailyLoad   Int
+  availableDays  String[]
+  preferredSlots Int[]
+  subjectIds     String[]
+  active         Boolean  @default(true)
+}
+
+model Subject {
+  id             String   @id @default(cuid())
+  subjectCode    String   @unique
+  subjectName    String
+  type           String
+  weeklySessions Int
+  durationSlots  Int
+  teacherIds     String[]
+  batchIds       String[]
+}
+
+model Room {
+  id            String   @id @default(cuid())
+  roomName      String   @unique
+  roomType      String
+  capacity      Int
+  equipmentTags String[]
+  usableDays    String[]
+}
+
+model Batch {
+  id                 String   @id @default(cuid())
+  batchName          String   @unique
+  section            String
+  department         String
+  semester           String
+  strength           Int
+  requiredSubjectIds String[]
+}
+
+model TimeSlot {
+  id        String   @id @default(cuid())
+  dayOfWeek String
+  slotIndex Int
+  startTime String
+  endTime   String
+  active    Boolean  @default(true)
+}
+
+model Holiday {
+  id          String   @id @default(cuid())
+  holidayDate String   @unique
+  holidayName String
+  fullDay     Boolean  @default(true)
+}
+
+model TeacherLeave {
+  id         String   @id @default(cuid())
+  teacherId  String
+  leaveDate  String
+  reason     String
+}
+
+model TimetableEntry {
+  id          String   @id @default(cuid())
+  batchId     String
+  subjectId   String
+  teacherId   String
+  roomId      String
+  dayOfWeek   String
+  date        String?
+  slotIndexes Int[]
+  status      String
+  isLocked    Boolean  @default(false)
+  source      String
+}
+
+model ChangeLog {
+  id               String   @id @default(cuid())
+  timetableEntryId String
+  changedBy        String
+  oldValue         String
+  newValue         String
+  changeType       String
+  timestamp        String
+}
