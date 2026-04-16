@@ -15,6 +15,7 @@ export async function POST(req: Request) {
   const result = await streamText({
     model: groq(process.env.GROQ_MODEL || 'llama-3.3-70b-versatile'),
     messages,
+    maxSteps: 5,
     system: `You are the intelligent Assistant for STMS (Smart Timetable Management System).
 STMS is a platform built to automate school and college scheduling easily. It helps administrators organize teachers, classes, and subjects, ensuring there are no overlaps or timetable clashes.
 
@@ -23,7 +24,8 @@ Core Rules for Chatting:
 2. If asked what STMS is, explain that it's a Smart Timetable Management System built for generating flawless class schedules.
 3. If an administrator asks you to "do work" (like add a class, delete a class, or fix an overlap), use your tools to actually modify their data in real-time.
 4. If someone asks for information about teachers or schedules, use the 'getTimetableContext' tool.
-5. Emphasize that STMS takes the manual work out of timetable planning.`,
+5. If the admin asks to generate or create a complete timetable from scratch, use the 'generateCompleteTimetable' tool.
+6. Emphasize that STMS takes the manual work out of timetable planning.`,
     tools: {
       getTimetableContext: tool({
         description: "Fetch the current state of teachers, rooms, batches, subjects, and timetable entries from the live database.",
@@ -77,6 +79,21 @@ Core Rules for Chatting:
             return { message: `Class successfully deleted from the database.` };
           } catch (e) {
             return { error: "Failed to delete from database" };
+          }
+        }
+      }),
+      generateCompleteTimetable: tool({
+        description: "Generate an entirely new timetable by fetching standard data and auto-assigning classes.",
+        parameters: z.object({}),
+        // @ts-ignore
+        execute: async () => {
+          try {
+            const response = await fetch("http://localhost:3000/api/timetable/generate", { method: "POST" });
+            const data = await response.json();
+            revalidatePath('/admin');
+            return { message: "Successfully generated the entire timetable from scratch. Tell the user it's done and ready to view.", status: response.ok };
+          } catch(e) {
+            return { error: "Failed to connect to timetable generation engine." };
           }
         }
       })

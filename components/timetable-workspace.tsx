@@ -69,6 +69,7 @@ export function TimetableWorkspace({
   const [draggedEntryId, setDraggedEntryId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
   const [editingEntry, setEditingEntry] = useState<TimetableEntry | null>(null);
+  const [showHolidayModal, setShowHolidayModal] = useState(false);
   const [editForm, setEditForm] = useState({ teacherId: "", roomId: "", dayOfWeek: "", slotStart: "" });
   const [holidayForm, setHolidayForm] = useState({ holidayDate: "", holidayName: "" });
   const [leaveForm, setLeaveForm] = useState({
@@ -482,6 +483,14 @@ export function TimetableWorkspace({
             {!readOnly && (
               <>
                 <button
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 px-3 py-2 text-xs font-medium text-ink transition hover:border-accent hover:text-accent"
+                  type="button"
+                  onClick={() => setShowHolidayModal(true)}
+                >
+                  <CalendarDays className="h-3.5 w-3.5" />
+                  Holiday & Leave
+                </button>
+                <button
                   className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-2 text-xs font-medium text-white transition hover:bg-accent"
                   type="button"
                   onClick={() =>
@@ -492,7 +501,7 @@ export function TimetableWorkspace({
                   }
                 >
                   <RefreshCcw className={cn("h-3.5 w-3.5", loading === "generate" && "animate-spin")} />
-                  {loading === "generate" ? "..." : "Generate"}
+                  {loading === "generate" ? "..." : "New Timetable"}
                 </button>
                 <button
                   className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 px-3 py-2 text-xs font-medium text-ink transition hover:border-accent hover:text-accent"
@@ -668,57 +677,7 @@ export function TimetableWorkspace({
 
         {/* ─── Sidebar ────────────────────────────── */}
         <div className="space-y-5">
-          {/* Holiday & Leave */}
-          {!readOnly && (
-            <section className="rounded-2xl border border-white/10 bg-forest p-4 text-white shadow-md">
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-accent">Holiday & Leave</h2>
 
-              <form
-                className="mt-4 space-y-2 rounded-xl border border-white/10 bg-white/5 p-3"
-                onSubmit={async (event) => {
-                  event.preventDefault();
-                  await mutateAction("holiday", async () => {
-                    const response = await fetch("/api/holidays", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ ...holidayForm, fullDay: true })
-                    });
-                    return { ok: response.ok, payload: await response.json() };
-                  });
-                  setHolidayForm({ holidayDate: "", holidayName: "" });
-                }}
-              >
-                <p className="text-[10px] uppercase tracking-widest text-white/40">Add Holiday</p>
-                <input className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" placeholder="Holiday name" value={holidayForm.holidayName} onChange={(e) => setHolidayForm((c) => ({ ...c, holidayName: e.target.value }))} />
-                <input className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" type="date" value={holidayForm.holidayDate} onChange={(e) => setHolidayForm((c) => ({ ...c, holidayDate: e.target.value }))} />
-                <button className="w-full rounded-lg bg-accent px-3 py-2 text-xs font-medium" type="submit">Save Holiday</button>
-              </form>
-
-              <form
-                className="mt-3 space-y-2 rounded-xl border border-white/10 bg-white/5 p-3"
-                onSubmit={async (event) => {
-                  event.preventDefault();
-                  await mutateAction("leave", async () => {
-                    const response = await fetch("/api/leaves", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify(leaveForm)
-                    });
-                    return { ok: response.ok, payload: await response.json() };
-                  });
-                  setLeaveForm((c) => ({ ...c, leaveDate: "", reason: "" }));
-                }}
-              >
-                <p className="text-[10px] uppercase tracking-widest text-white/40">Record Leave</p>
-                <select className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" value={leaveForm.teacherId} onChange={(e) => setLeaveForm((c) => ({ ...c, teacherId: e.target.value }))}>
-                  {data.teachers.map((t) => (<option key={t.id} value={t.id}>{t.name}</option>))}
-                </select>
-                <input className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" type="date" value={leaveForm.leaveDate} onChange={(e) => setLeaveForm((c) => ({ ...c, leaveDate: e.target.value }))} />
-                <input className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" placeholder="Reason" value={leaveForm.reason} onChange={(e) => setLeaveForm((c) => ({ ...c, reason: e.target.value }))} />
-                <button className="w-full rounded-lg bg-accent px-3 py-2 text-xs font-medium" type="submit">Save Leave</button>
-              </form>
-            </section>
-          )}
 
           {/* Conflicts */}
           <section className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
@@ -800,6 +759,92 @@ export function TimetableWorkspace({
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* ─── Holiday & Leave Modal ────────────────── */}
+      {showHolidayModal && !readOnly && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 backdrop-blur-sm sm:p-4" onClick={() => setShowHolidayModal(false)}>
+          <div
+            className="w-full max-w-md rounded-2xl border border-white/10 bg-forest p-5 text-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-accent">Holiday & Leave</h2>
+                <p className="mt-1 text-[10px] text-white/60">Manage faculty absence and custom holidays</p>
+              </div>
+              <button type="button" onClick={() => setShowHolidayModal(false)} className="rounded-lg p-2 hover:bg-white/10 transition">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form
+              className="space-y-3 rounded-xl border border-white/10 bg-white/5 p-4"
+              onSubmit={async (event) => {
+                event.preventDefault();
+                await mutateAction("holiday", async () => {
+                  const response = await fetch("/api/holidays", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ...holidayForm, fullDay: true })
+                  });
+                  return { ok: response.ok, payload: await response.json() };
+                });
+                setHolidayForm({ holidayDate: "", holidayName: "" });
+              }}
+            >
+              <p className="text-[10px] uppercase tracking-widest text-white/40">Add Holiday</p>
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40 ml-1">Holiday Name</span>
+                <input className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" placeholder="E.g. Diwali break" required value={holidayForm.holidayName} onChange={(e) => setHolidayForm((c) => ({ ...c, holidayName: e.target.value }))} />
+              </label>
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40 ml-1">Date</span>
+                <input className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" type="date" required value={holidayForm.holidayDate} onChange={(e) => setHolidayForm((c) => ({ ...c, holidayDate: e.target.value }))} />
+              </label>
+              <button className="w-full rounded-lg bg-accent px-4 py-2 text-xs font-semibold uppercase tracking-wider text-ink transition hover:bg-white hover:text-ink mt-2" type="submit">
+                Save Holiday
+              </button>
+            </form>
+
+            <form
+              className="mt-4 space-y-3 rounded-xl border border-white/10 bg-white/5 p-4"
+              onSubmit={async (event) => {
+                event.preventDefault();
+                await mutateAction("leave", async () => {
+                  const response = await fetch("/api/leaves", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(leaveForm)
+                  });
+                  return { ok: response.ok, payload: await response.json() };
+                });
+                setLeaveForm((c) => ({ ...c, leaveDate: "", reason: "" }));
+              }}
+            >
+              <p className="text-[10px] uppercase tracking-widest text-white/40">Record Faculty Leave</p>
+              <label className="block">
+                 <span className="text-[10px] uppercase tracking-widest text-white/40 ml-1">Teacher</span>
+                <select className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" value={leaveForm.teacherId} onChange={(e) => setLeaveForm((c) => ({ ...c, teacherId: e.target.value }))}>
+                  {data.teachers.map((t) => (<option key={t.id} value={t.id}>{t.name}</option>))}
+                </select>
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block">
+                  <span className="text-[10px] uppercase tracking-widest text-white/40 ml-1">Leave Date</span>
+                  <input className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" type="date" required value={leaveForm.leaveDate} onChange={(e) => setLeaveForm((c) => ({ ...c, leaveDate: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-[10px] uppercase tracking-widest text-white/40 ml-1">Reason</span>
+                  <input className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs outline-none focus:border-accent" placeholder="Not well" required value={leaveForm.reason} onChange={(e) => setLeaveForm((c) => ({ ...c, reason: e.target.value }))} />
+                </label>
+              </div>
+              <button className="w-full rounded-lg bg-accent px-4 py-2 text-xs font-semibold uppercase tracking-wider text-ink transition hover:bg-white hover:text-ink mt-2" type="submit">
+                Save Leave
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>
