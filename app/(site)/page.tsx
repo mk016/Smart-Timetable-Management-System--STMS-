@@ -88,18 +88,18 @@ export default async function HomePage() {
           </div>
 
           <h1 className="mt-8 max-w-6xl text-balance font-serif text-[clamp(3rem,13vw,9rem)] uppercase leading-[0.9] tracking-tight text-ink">
-            <span className="reveal delay-200 block">Orchestrate Flawless</span>
+            <span className="reveal delay-200 block">Create Perfect</span>
             <span className="reveal delay-300 block bg-gradient-to-r from-ink to-accent bg-clip-text text-transparent">
-              Academic Schedules
+              Class Schedules
             </span>
           </h1>
 
           <p className="reveal delay-400 mt-8 max-w-4xl text-balance font-serif text-base leading-relaxed text-ink/70 sm:text-xl md:text-3xl">
-            The intelligent operating system for educational institutes. Automate timetable generation, resolve complex resource conflicts, and streamline campus operations with AI-powered precision.
+            The smart software for schools and colleges. Easily make timetables, stop teacher overlaps, and manage everything with AI help.
           </p>
 
           <div className="reveal delay-500 mt-6 text-sm uppercase tracking-[0.3em] text-ink/45">
-            Enterprise Grade • AI Co-Pilot • Real-time Sync • Automated Deployment
+            Very Fast • AI Helper • Auto Updates • Easy Export
           </div>
 
           <div className="reveal delay-500 mt-12 flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row">
@@ -107,14 +107,14 @@ export default async function HomePage() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-10 py-4 text-sm uppercase tracking-[0.2em] text-white transition hover:bg-accent sm:w-auto"
               href="/login"
             >
-              Access Platform
+              Open Platform
               <ArrowRight className="h-4 w-4" />
             </Link>
             <a
               className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/15 px-10 py-4 text-sm uppercase tracking-[0.2em] text-ink transition hover:border-accent hover:text-accent sm:w-auto"
               href="#workflow"
             >
-              Explore Architecture
+              See How It Works
             </a>
           </div>
         </div>
@@ -129,10 +129,10 @@ export default async function HomePage() {
             <span className="h-px w-12 bg-accent" />
           </div>
           <h2 className="reveal delay-100 mt-8 text-balance font-serif text-3xl uppercase leading-[0.95] tracking-tight text-white sm:text-5xl md:text-6xl">
-            From Operational Chaos To <span className="block text-accent">Predictable Harmony</span>
+            Stop Manual Work, <span className="block text-accent">Start Saving Time</span>
           </h2>
           <p className="reveal delay-200 mx-auto mt-8 max-w-4xl text-balance font-serif text-base leading-relaxed text-white/65 sm:text-lg md:text-2xl">
-            STMS consolidates your entire scheduling lifecycle into a single, unified platform. By combining deterministic constraint solvers with intelligent role-based interfaces, we eliminate administrative overhead and ensure zero operational overlaps across faculty and infrastructure.
+            STMS puts all your schedule tasks in one place. Using smart computer rules, we make sure teachers and rooms are never booked twice at the same time. This saves hours of manual checking.
           </p>
         </div>
       </section>
@@ -141,24 +141,24 @@ export default async function HomePage() {
         <div className="mx-auto grid max-w-[1320px] gap-6 lg:grid-cols-4">
           {[
             {
-              title: "Algorithmic Solver",
+              title: "Smart Checker",
               icon: ShieldCheck,
-              text: "A highly optimized deterministic scheduling engine that dynamically prevents faculty clashes, room overlaps, and capacity violations."
+              text: "A fast system that stops teacher clashes, room overlaps, and mistakes automatically while making schedules."
             },
             {
-              title: "Unified Data Core",
+              title: "One Data Source",
               icon: Database,
-              text: "A centralized repository for your academic blueprints. Effortlessly manage campus topology, departmental assets, and faculty availability."
+              text: "A single place for all your school data. Easily add and manage teachers, rooms, classes, and subjects."
             },
             {
-              title: "AI Co-Pilot",
+              title: "AI Helper",
               icon: WandSparkles,
-              text: "Integrated machine learning models that analyze scheduling bottlenecks, parse natural language commands, and suggest optimal resolutions."
+              text: "A built-in AI chatbot that reads your errors, answers questions, and helps fix schedule problems fast."
             },
             {
-              title: "Instant Publishing",
+              title: "Easy Share",
               icon: Download,
-              text: "Deploy finalized schedules directly to personalized portals. Support for robust interoperability via comprehensive PDF and CSV exports."
+              text: "Send final timetables directly to teacher and student portals. You can also print them as PDF or Excel files."
             }
           ].map((card, index) => {
             const Icon = card.icon;
@@ -194,7 +194,7 @@ export default async function HomePage() {
             Product Workflow
           </div>
           <h2 className="reveal delay-100 mt-8 text-balance font-serif text-3xl uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-7xl">
-            Input To Output <span className="block text-accent">In One Continuous Loop</span>
+            From Start To Finish <span className="block text-accent">In Simple Steps</span>
           </h2>
           <div className="reveal delay-200 mt-10 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
             {workflow.map((step) => (
@@ -212,13 +212,13 @@ export default async function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-4 py-2 text-xs uppercase tracking-[0.25em] text-accent">
                 <Blocks className="h-4 w-4" />
-                Live Product Surface
+                Live Product Demo
               </div>
               <h2 className="mt-8 text-balance font-serif text-3xl uppercase leading-[0.95] tracking-tight text-ink sm:text-5xl md:text-6xl">
-                Engineered For <span className="block text-accent">Scale & Clarity</span>
+                Easy To Use For <span className="block text-accent">Everyone</span>
               </h2>
               <p className="mt-6 max-w-2xl text-balance font-serif text-base leading-relaxed text-ink/65 sm:text-xl">
-                Experience a meticulously crafted application ecosystem. From extensive administrative control centers to focused, distraction-free portals for students and faculty.
+                Enjoy a clear and simple app design. Admins get powerful tools to manage everything, while teachers and students get clean, focused timetable views.
               </p>
               <div className="mt-10 grid gap-4">
                 {stats.map((stat) => (
@@ -233,32 +233,32 @@ export default async function HomePage() {
 
             <div className="grid gap-6">
               <div className="rounded-[2rem] border border-ink/10 bg-white p-5 shadow-[0_20px_60px_-15px_rgba(45,50,47,0.12)] sm:p-8">
-                <p className="text-xs uppercase tracking-[0.3em] text-accent">Control Center</p>
-                <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight text-ink sm:text-4xl">Generate. Validate. Distribute.</h3>
+                <p className="text-xs uppercase tracking-[0.3em] text-accent">Admin Dashboard</p>
+                <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight text-ink sm:text-4xl">Make. Check. Send.</h3>
                 <p className="mt-4 text-sm leading-7 text-ink/60">
-                  Command your institution from a single pane of glass. Monitor algorithmic constraint validations, analyze AI-driven quality metrics, and execute instantaneous enterprise-wide schedule deployments.
+                  Control everything from one page. Check if timetables are correct, view AI tips, and send new schedules to all students and staff at once.
                 </p>
               </div>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-[2rem] border border-white/10 bg-forest p-5 text-white sm:p-8">
-                  <p className="text-xs uppercase tracking-[0.3em] text-accent">Faculty Portal</p>
-                  <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight">Real-Time Clarity</h3>
+                  <p className="text-xs uppercase tracking-[0.3em] text-accent">Teacher View</p>
+                  <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight">Clear Daily Plan</h3>
                   <p className="mt-4 text-sm leading-7 text-white/60">
-                    Provide educators with immediate visibility into their daily commitments, specialized room assignments, and upcoming structural schedule changes.
+                    Teachers can easily see their daily schedule, which room they need to go to, and any changes, all on their mobile or laptop.
                   </p>
                 </div>
                 <div className="rounded-[2rem] border border-ink/10 bg-white p-5 sm:p-8">
-                  <p className="text-xs uppercase tracking-[0.3em] text-accent">Student Portal</p>
-                  <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight text-ink">Frictionless Access</h3>
+                  <p className="text-xs uppercase tracking-[0.3em] text-accent">Student View</p>
+                  <h3 className="mt-3 font-serif text-3xl uppercase tracking-tight text-ink">Simple Access</h3>
                   <p className="mt-4 text-sm leading-7 text-ink/60">
-                    Deliver a highly responsive, cohort-specific academic itinerary. Students receive guaranteed accuracy for room locations and session timings.
+                    Students get a clean, weekly view of their classes. They always know when and where to be without confusion.
                   </p>
                 </div>
               </div>
               <div className="rounded-[2rem] border border-accent/20 bg-gradient-to-r from-accent/15 to-transparent p-5 sm:p-8">
-                <p className="text-xs uppercase tracking-[0.3em] text-accent">Technical Stack</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-accent">Technology Used</p>
                 <p className="mt-3 text-lg leading-8 text-ink/70">
-                  Built on high-performance Edge infrastructure leveraging cutting-edge web frameworks, deterministic constraint evaluators, dynamic relational datastores, and state-of-the-art cryptographic session management.
+                  Built on modern, fast technology. We use Next.js for speed, simple databases to store info securely, and strong safety rules for logins.
                 </p>
               </div>
             </div>
@@ -269,12 +269,12 @@ export default async function HomePage() {
       <section className="bg-forest px-4 py-20 text-center text-white sm:px-6 sm:py-24">
         <div className="mx-auto max-w-4xl">
           <div className="mx-auto mb-8 h-px w-12 bg-accent" />
-          <p className="text-xs uppercase tracking-[0.35em] text-accent/80">Experience The Future</p>
+          <p className="text-xs uppercase tracking-[0.35em] text-accent/80">Try It Now</p>
           <h2 className="mt-6 text-balance font-serif text-3xl uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-7xl">
-            Upgrade Your Campus <span className="text-accent">Infrastructure</span>
+            Upgrade Your School <span className="text-accent">Timetable</span>
           </h2>
           <p className="mx-auto mt-8 max-w-2xl text-balance font-serif text-base leading-relaxed text-white/60 sm:text-xl">
-            Streamline your academic operations today. Access our interactive demonstration environments and witness the algorithmic efficiency firsthand.
+            Make your school tasks easier today. Use our quick demo to see how fast scheduling can really be.
           </p>
           <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
             <Link

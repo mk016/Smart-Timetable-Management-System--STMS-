@@ -1,8 +1,8 @@
 import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
-import { getAppData } from '@/lib/app-data';
-import { validateTimetable } from '@/lib/services/scheduler';
+import { db } from '@/lib/db';
+import { revalidatePath } from 'next/cache';
 
 const groq = createOpenAI({
   baseURL: 'https://api.groq.com/openai/v1',
@@ -15,44 +15,69 @@ export async function POST(req: Request) {
   const result = await streamText({
     model: groq(process.env.GROQ_MODEL || 'llama-3.3-70b-versatile'),
     messages,
-    system: `You are the STMS Timetable Schedule Assistant.
-Your goal is to help administrators fix conflicts, build schedules, and customize timetables.
-DO NOT allow overlaps. Always use tools to check constraints before confirming an action.
-If the administrator asks to generate the entire timetable, suggest they use the "Generate" button, but if they insist on creating specific entries, use the createEntry tool and verify it doesn't overlap.`,
+    system: `You are the intelligent Assistant for STMS (Smart Timetable Management System).
+STMS is a platform built to automate school and college scheduling easily. It helps administrators organize teachers, classes, and subjects, ensuring there are no overlaps or timetable clashes.
+
+Core Rules for Chatting:
+1. Always answer pleasantly and concisely.
+2. If asked what STMS is, explain that it's a Smart Timetable Management System built for generating flawless class schedules.
+3. If an administrator asks you to "do work" (like add a class, delete a class, or fix an overlap), use your tools to actually modify their data in real-time.
+4. If someone asks for information about teachers or schedules, use the 'getTimetableContext' tool.
+5. Emphasize that STMS takes the manual work out of timetable planning.`,
     tools: {
       getTimetableContext: tool({
-        description: "Fetch the current state of teachers, rooms, batches, holidays, and active timetable entries.",
+        description: "Fetch the current state of teachers, rooms, batches, subjects, and timetable entries from the live database.",
         parameters: z.object({}),
-        // @ts-ignore - Bypass AI SDK inference bug
+        // @ts-ignore
         execute: async () => {
-          const data = await getAppData();
-          const conflicts = validateTimetable(data);
+          const teachers = await db.user.findMany({ where: { role: 'TEACHER' }, select: { name: true, email: true } });
+          const entries = await db.timetableEntry.findMany({ include: { teacher: true, batch: true } });
           return {
-            teachersCount: data.teachers.length,
-            classesScheduled: data.timetableEntries.length,
-            currentConflicts: conflicts,
-            teachers: data.teachers.map(t => ({ id: t.id, name: t.name, subjectIds: t.subjectIds })),
-            batches: data.batches.map(b => ({ id: b.id, name: b.batchName })),
+            teachersCount: teachers.length,
+            classesScheduled: entries.length,
+            teachers: teachers.map(t => t.name).join(', '),
+            message: "Platform context loaded successfully from PostgreSQL database."
           };
         }
       }),
       resolveOverlap: tool({
-        description: "Find an alternative slot for a conflicting class",
+        description: "Find a conflicting class and move it to a different day or slot inside the database.",
         parameters: z.object({
           entryId: z.string().describe("The ID of the timetable entry to move"),
-          preferredDay: z.string().optional().describe("E.g., Monday")
+          targetDay: z.string().describe("E.g., Monday, Tuesday"),
+          targetSlot: z.number().describe("E.g., 1, 2, 3")
         }),
-        // @ts-ignore - Bypass AI SDK inference bug
-        execute: async ({ entryId, preferredDay }) => {
-          const data = await getAppData();
-          const entry = data.timetableEntries.find(e => e.id === entryId);
-          if (!entry) return { error: "Entry not found" };
-          
-          return { 
-            message: `Mock: Successfully found alternative slot for ${entry.subjectId} on ${preferredDay || 'Tuesday'} slot 3 without overlaps.`, 
-            suggestedDay: preferredDay || 'Tuesday', 
-            suggestedSlotStart: 3 
-          };
+        // @ts-ignore
+        execute: async ({ entryId, targetDay, targetSlot }) => {
+          try {
+            const entry = await db.timetableEntry.findUnique({ where: { id: entryId } });
+            if (!entry) return { error: "Entry not found" };
+            
+            await db.timetableEntry.update({
+              where: { id: entryId },
+              data: { dayOfWeek: targetDay, slotStart: targetSlot, slotEnd: targetSlot + 1 }
+            });
+            revalidatePath('/admin');
+            return { message: `Successfully moved the class to ${targetDay} at slot ${targetSlot}.` };
+          } catch (e) {
+            return { error: "Failed to update database" };
+          }
+        }
+      }),
+      deleteTimetableEntry: tool({
+        description: "Delete a specific class/timetable entry from the master database.",
+        parameters: z.object({
+          entryId: z.string().describe("The ID of the timetable entry to delete")
+        }),
+        // @ts-ignore
+        execute: async ({ entryId }) => {
+          try {
+            await db.timetableEntry.delete({ where: { id: entryId } });
+            revalidatePath('/admin');
+            return { message: `Class successfully deleted from the database.` };
+          } catch (e) {
+            return { error: "Failed to delete from database" };
+          }
         }
       })
     }
