@@ -4,10 +4,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { COOKIE_NAME, parseSessionToken } from "@/lib/auth";
 import { getAppData } from "@/lib/app-data";
-import { updateStore } from "@/lib/store";
 import { AppData, Role, TimetableEntry } from "@/lib/types";
+import { db } from "@/lib/db";
 
 export type EntityCollection = "teachers" | "subjects" | "rooms" | "batches" | "holidays" | "leaves";
+
+function getPrismaModel(key: EntityCollection) {
+  switch (key) {
+    case "teachers": return db.teacher;
+    case "subjects": return db.subject;
+    case "rooms": return db.room;
+    case "batches": return db.batch;
+    case "holidays": return db.holiday;
+    case "leaves": return db.teacherLeave;
+  }
+}
 
 export function createId(prefix: string) {
   return `${prefix}-${crypto.randomUUID().slice(0, 8)}`;
@@ -30,8 +41,11 @@ export async function collectionGet(request: NextRequest, key: EntityCollection)
   if (blocked) {
     return blocked;
   }
+  const model = getPrismaModel(key);
+  const items = await (model as any).findMany();
+  // Include global app data since some callers might rely on it
   const data = await getAppData();
-  return NextResponse.json({ items: data[key], data });
+  return NextResponse.json({ items, data });
 }
 
 export async function collectionPost(
@@ -45,18 +59,19 @@ export async function collectionPost(
   }
 
   const body = await request.json();
-  const item = {
-    id: createId(prefix),
+  const itemData = {
+    // Optionally create ID if not provided. Prisma also handles default cuid().
+    id: body.id || createId(prefix),
     ...body
   };
 
-  type EntityRecord = { id: string } & Record<string, unknown>;
-  const data = await updateStore((current) => ({
-    ...current,
-    [key]: [item, ...((current[key] as unknown) as EntityRecord[])]
-  })) as AppData;
-
-  return NextResponse.json({ item, items: data[key], data, message: "Saved successfully." });
+  const model = getPrismaModel(key);
+  const item = await (model as any).create({ data: itemData });
+  const items = await (model as any).findMany();
+  
+  // Re-fetch data for callers expecting a fresh state
+  const data = await getAppData();
+  return NextResponse.json({ item, items, data, message: "Saved successfully." });
 }
 
 export async function itemPut(
@@ -70,16 +85,12 @@ export async function itemPut(
   }
 
   const body = await request.json();
-  type EntityRecord = { id: string } & Record<string, unknown>;
-  const data = await updateStore((current) => ({
-    ...current,
-    [key]: (((current[key] as unknown) as EntityRecord[]).map((item) =>
-      item.id === id ? { ...item, ...body, id } : item
-    )) as EntityRecord[]
-  })) as AppData;
-
-  const item = ((data[key] as unknown) as EntityRecord[]).find((entity) => entity.id === id);
-  return NextResponse.json({ item, items: data[key], data, message: "Updated successfully." });
+  const model = getPrismaModel(key);
+  const item = await (model as any).update({ where: { id }, data: body });
+  const items = await (model as any).findMany();
+  
+  const data = await getAppData();
+  return NextResponse.json({ item, items, data, message: "Updated successfully." });
 }
 
 export async function itemDelete(
@@ -92,13 +103,12 @@ export async function itemDelete(
     return blocked;
   }
 
-  type EntityRecord = { id: string } & Record<string, unknown>;
-  const data = await updateStore((current) => ({
-    ...current,
-    [key]: (((current[key] as unknown) as EntityRecord[]).filter((item) => item.id !== id)) as EntityRecord[]
-  })) as AppData;
-
-  return NextResponse.json({ items: data[key], data, message: "Deleted successfully." });
+  const model = getPrismaModel(key);
+  await (model as any).delete({ where: { id } });
+  const items = await (model as any).findMany();
+  
+  const data = await getAppData();
+  return NextResponse.json({ items, data, message: "Deleted successfully." });
 }
 
 export function entrySnapshot(data: AppData, entry: TimetableEntry) {

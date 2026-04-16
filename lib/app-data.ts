@@ -1,16 +1,47 @@
-import { readStore, writeStore } from "@/lib/store";
 import { applyGenerationResult, generateTimetable } from "@/lib/services/scheduler";
 import { AppData, Role, TimetableEntry } from "@/lib/types";
+import { db } from "@/lib/db";
 
-export async function getAppData(options?: { ensureTimetable?: boolean }) {
-  const data = await readStore();
+export async function getAppData(options?: { ensureTimetable?: boolean }): Promise<AppData> {
+  const users = await db.user.findMany();
+  const teachers = await db.teacher.findMany();
+  const subjects = await db.subject.findMany();
+  const rooms = await db.room.findMany();
+  const batches = await db.batch.findMany();
+  const slots = await db.timeSlot.findMany();
+  const holidays = await db.holiday.findMany();
+  const leaves = await db.teacherLeave.findMany();
+  const timetableEntries = await db.timetableEntry.findMany();
+  const changeLogs = await db.changeLog.findMany();
+
+  const data: AppData = {
+    users,
+    teachers,
+    subjects,
+    rooms,
+    batches,
+    slots,
+    holidays,
+    leaves,
+    timetableEntries,
+    changeLogs,
+    settings: {}
+  };
+
   if (!options?.ensureTimetable || data.timetableEntries.length > 0) {
     return data;
   }
 
   const result = generateTimetable(data);
   const updated = applyGenerationResult(data, result);
-  await writeStore(updated);
+
+  if (updated.timetableEntries.length > 0) {
+    await db.$transaction([
+      db.timetableEntry.deleteMany(),
+      db.timetableEntry.createMany({ data: updated.timetableEntries })
+    ]);
+  }
+
   return updated;
 }
 
