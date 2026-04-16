@@ -18,6 +18,7 @@ import {
   WandSparkles,
   X
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import { AppData, Conflict, TimetableEntry, WEEK_DAYS, WeekDay } from "@/lib/types";
@@ -60,7 +61,6 @@ export function TimetableWorkspace({
 
   const [data, setData] = useState(initialData);
   const [conflicts, setConflicts] = useState<Conflict[]>([]);
-  const [note, setNote] = useState("");
   const [batchFilter, setBatchFilter] = useState(defaultFilter);
   const [loading, setLoading] = useState<string>("");
   const [viewMode, setViewMode] = useState<ViewMode>("week");
@@ -70,6 +70,9 @@ export function TimetableWorkspace({
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
   const [editingEntry, setEditingEntry] = useState<TimetableEntry | null>(null);
   const [showHolidayModal, setShowHolidayModal] = useState(false);
+  const [showConflictsModal, setShowConflictsModal] = useState(false);
+  const [addingSlot, setAddingSlot] = useState<{ dayOfWeek: WeekDay; slotStart: number } | null>(null);
+  const [addForm, setAddForm] = useState({ batchId: "", subjectId: "", teacherId: "", roomId: "" });
   const [editForm, setEditForm] = useState({ teacherId: "", roomId: "", dayOfWeek: "", slotStart: "" });
   const [holidayForm, setHolidayForm] = useState({ holidayDate: "", holidayName: "" });
   const [leaveForm, setLeaveForm] = useState({
@@ -110,34 +113,52 @@ export function TimetableWorkspace({
   const activeDay = WEEK_DAYS[activeDayIndex];
 
   async function refreshData() {
-    const response = await fetch("/api/timetable");
-    const payload = await response.json();
-    setData(payload.data);
-    setConflicts([]);
-    setNote("Latest timetable reloaded.");
-    setSelectedMoveEntryId(null);
-    setDraggedEntryId(null);
-    setDropTarget(null);
+    const toastId = toast.loading("Reloading timetable...");
+    try {
+      const response = await fetch("/api/timetable");
+      const payload = await response.json();
+      setData(payload.data);
+      setConflicts([]);
+      toast.success("Latest timetable reloaded.", { id: toastId });
+      setSelectedMoveEntryId(null);
+      setDraggedEntryId(null);
+      setDropTarget(null);
+    } catch {
+      toast.error("Failed to reload data.", { id: toastId });
+    }
   }
 
   async function mutateAction(
     key: string,
-    executor: () => Promise<{ ok: boolean; payload: Record<string, unknown> }>
+    executor: () => Promise<{ ok: boolean; payload: Record<string, unknown> }>,
+    loadingMsg?: string
   ) {
     setLoading(key);
-    setNote("");
-    const result = await executor();
-    setLoading("");
-    if (result.ok) {
-      const nextData = result.payload.data as AppData | undefined;
-      if (nextData) setData(nextData);
-      const nextConflicts = result.payload.conflicts as Conflict[] | undefined;
-      setConflicts(nextConflicts ?? []);
-      setNote(String(result.payload.message || "Action completed."));
-    } else {
-      const nextConflicts = result.payload.conflicts as Conflict[] | undefined;
-      if (nextConflicts) setConflicts(nextConflicts);
-      setNote(String(result.payload.error || "Action failed."));
+    let toastId;
+    if (loadingMsg) toastId = toast.loading(loadingMsg);
+    
+    try {
+      const result = await executor();
+      setLoading("");
+      if (result.ok) {
+        const nextData = result.payload.data as AppData | undefined;
+        if (nextData) setData(nextData);
+        const nextConflicts = result.payload.conflicts as Conflict[] | undefined;
+        setConflicts(nextConflicts ?? []);
+        const msg = String(result.payload.message || "Action completed.");
+        if (toastId) toast.success(msg, { id: toastId });
+        else toast.success(msg);
+      } else {
+        const nextConflicts = result.payload.conflicts as Conflict[] | undefined;
+        if (nextConflicts) setConflicts(nextConflicts);
+        const msg = String(result.payload.error || "Action failed.");
+        if (toastId) toast.error(msg, { id: toastId });
+        else toast.error(msg);
+      }
+    } catch (error) {
+      setLoading("");
+      if (toastId) toast.error("An error occurred.", { id: toastId });
+      else toast.error("An error occurred.");
     }
   }
 
@@ -157,7 +178,7 @@ export function TimetableWorkspace({
         body: JSON.stringify({ dayOfWeek, slotStart, isLocked: true })
       });
       return { ok: response.ok, payload: await response.json() };
-    });
+    }, "Moving class...");
     setSelectedMoveEntryId(null);
     setDraggedEntryId(null);
     setDropTarget(null);
@@ -195,8 +216,29 @@ export function TimetableWorkspace({
         })
       });
       return { ok: response.ok, payload: await response.json() };
-    });
+    }, "Saving changes...");
     setEditingEntry(null);
+  }
+
+  async function handleAddSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    if (!addingSlot) return;
+    await mutateAction("add-entry", async () => {
+      const response = await fetch("/api/timetable", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          dayOfWeek: addingSlot.dayOfWeek,
+          slotStart: addingSlot.slotStart,
+          batchId: addForm.batchId || data.batches[0]?.id,
+          subjectId: addForm.subjectId || data.subjects[0]?.id,
+          teacherId: addForm.teacherId || data.teachers[0]?.id,
+          roomId: addForm.roomId || data.rooms[0]?.id
+        })
+      });
+      return { ok: response.ok, payload: await response.json() };
+    }, "Evaluating schedule and adding class...");
+    setAddingSlot(null);
   }
 
   // ─── Entry Card ────────────────────────────────────
@@ -371,8 +413,11 @@ export function TimetableWorkspace({
                         day,
                         slot.slotIndex,
                         cellEntries.length === 0 ? (
-                          <div className="flex h-[4rem] items-center justify-center rounded-lg text-[10px] text-ink/20">
-                            —
+                          <div 
+                            className={cn("flex h-[4rem] items-center justify-center rounded-lg border border-dashed border-ink/10 text-[10px] text-ink/40 transition", !readOnly && "cursor-pointer hover:bg-slate-100 hover:border-ink/20 hover:text-ink/60")}
+                            onClick={() => !readOnly && setAddingSlot({ dayOfWeek: day, slotStart: slot.slotIndex })}
+                          >
+                            + Add
                           </div>
                         ) : (
                           cellEntries.map((entry) => renderEntryCard(entry, slot.slotIndex))
@@ -412,8 +457,11 @@ export function TimetableWorkspace({
                   day,
                   slot.slotIndex,
                   cellEntries.length === 0 ? (
-                    <div className="flex h-14 items-center justify-center rounded-lg border border-dashed border-ink/10 text-xs text-ink/25">
-                      Free
+                    <div 
+                      className={cn("flex h-14 items-center justify-center rounded-lg border border-dashed border-ink/10 text-xs transition", !readOnly && "cursor-pointer hover:bg-slate-100 text-ink/40 hover:text-ink/70")}
+                      onClick={() => !readOnly && setAddingSlot({ dayOfWeek: day, slotStart: slot.slotIndex })}
+                    >
+                      + Add Class
                     </div>
                   ) : (
                     cellEntries.map((entry) => renderEntryCard(entry, slot.slotIndex))
@@ -491,17 +539,38 @@ export function TimetableWorkspace({
                   Holiday & Leave
                 </button>
                 <button
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 px-3 py-2 text-xs font-medium text-ink transition hover:border-accent hover:text-accent"
+                  type="button"
+                  onClick={() => setShowConflictsModal(true)}
+                >
+                  <AlertTriangle className={cn("h-3.5 w-3.5", conflicts.length > 0 ? "text-amber-500" : "text-ink/40")} />
+                  Conflicts {conflicts.length > 0 && <span className="ml-1 flex items-center justify-center rounded-full bg-red-100 px-1.5 py-0.5 text-[9px] font-bold text-red-600">{conflicts.length}</span>}
+                </button>
+                <button
                   className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-2 text-xs font-medium text-white transition hover:bg-accent"
+                  type="button"
+                  onClick={() =>
+                    mutateAction("clear", async () => {
+                      const response = await fetch("/api/timetable/clear", { method: "POST" });
+                      return { ok: response.ok, payload: await response.json() };
+                    }, "Clearing canvas...")
+                  }
+                >
+                  <RefreshCcw className={cn("h-3.5 w-3.5", loading === "clear" && "animate-spin")} />
+                  {loading === "clear" ? "..." : "Blank Canvas"}
+                </button>
+                <button
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-medium text-white transition hover:bg-ink hover:text-white"
                   type="button"
                   onClick={() =>
                     mutateAction("generate", async () => {
                       const response = await fetch("/api/timetable/generate", { method: "POST" });
                       return { ok: response.ok, payload: await response.json() };
-                    })
+                    }, "Generating AI timetable...")
                   }
                 >
-                  <RefreshCcw className={cn("h-3.5 w-3.5", loading === "generate" && "animate-spin")} />
-                  {loading === "generate" ? "..." : "New Timetable"}
+                  <WandSparkles className={cn("h-3.5 w-3.5", loading === "generate" && "animate-spin")} />
+                  {loading === "generate" ? "..." : "Auto-Generate"}
                 </button>
                 <button
                   className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 px-3 py-2 text-xs font-medium text-ink transition hover:border-accent hover:text-accent"
@@ -510,7 +579,7 @@ export function TimetableWorkspace({
                     mutateAction("validate", async () => {
                       const response = await fetch("/api/timetable/validate");
                       return { ok: response.ok, payload: await response.json() };
-                    })
+                    }, "Running validation checks...")
                   }
                 >
                   <ShieldCheck className="h-3.5 w-3.5" />
@@ -523,7 +592,7 @@ export function TimetableWorkspace({
                     mutateAction("publish", async () => {
                       const response = await fetch("/api/timetable/publish", { method: "POST" });
                       return { ok: response.ok, payload: await response.json() };
-                    })
+                    }, "Publishing timetable...")
                   }
                 >
                   <ArrowUpRight className="h-3.5 w-3.5" />
@@ -554,7 +623,7 @@ export function TimetableWorkspace({
               mutateAction("quality", async () => {
                 const response = await fetch("/api/ai/summarize-quality");
                 return { ok: response.ok, payload: await response.json() };
-              })
+              }, "Analyzing structure quality...")
             }
           >
             <Sparkles className="h-3 w-3" /> AI Quality
@@ -566,7 +635,7 @@ export function TimetableWorkspace({
               mutateAction("resolve", async () => {
                 const response = await fetch("/api/conflicts/resolve", { method: "POST" });
                 return { ok: response.ok, payload: await response.json() };
-              })
+              }, "AI is resolving conflicts...")
             }
           >
             <WandSparkles className="h-3 w-3" /> Resolve
@@ -578,7 +647,7 @@ export function TimetableWorkspace({
                 setSelectedMoveEntryId(null);
                 setDraggedEntryId(null);
                 setDropTarget(null);
-                setNote("Move cancelled.");
+                toast.info("Move cancelled.");
               }}
               type="button"
             >
@@ -586,12 +655,10 @@ export function TimetableWorkspace({
             </button>
           )}
         </div>
-
-        {note && <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-ink/60">{note}</p>}
       </section>
 
       {/* ─── Calendar Grid ─────────────────────────── */}
-      <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
+      <div className="grid gap-5 grid-cols-1">
         <div>
           {/* Day navigator (for day view + mobile) */}
           {(viewMode === "day" || true) && (
@@ -675,32 +742,6 @@ export function TimetableWorkspace({
           </div>
         </div>
 
-        {/* ─── Sidebar ────────────────────────────── */}
-        <div className="space-y-5">
-
-
-          {/* Conflicts */}
-          <section className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="h-4 w-4 text-amber-500" />
-              <h2 className="text-sm font-bold text-ink">Conflicts</h2>
-              <span className="ml-auto rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600">{conflicts.length}</span>
-            </div>
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {conflicts.map((conflict) => (
-                <div key={`${conflict.type}-${conflict.entryIds.join("-")}`} className="rounded-xl border border-red-100 bg-red-50/50 p-3">
-                  <p className="text-xs font-medium text-red-700">{conflict.message}</p>
-                  <p className="mt-1 text-[10px] uppercase tracking-wider text-red-400">{conflict.type.replaceAll("_", " ")}</p>
-                </div>
-              ))}
-              {conflicts.length === 0 && (
-                <div className="rounded-xl bg-emerald-50 p-3 text-xs text-emerald-600">
-                  ✓ No conflicts detected. Run Validate to check.
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
       </div>
 
       {/* ─── Edit Modal ─────────────────────────────── */}
@@ -762,6 +803,63 @@ export function TimetableWorkspace({
         </div>
       )}
 
+      {/* ─── Add Modal ─────────────────────────────────────── */}
+      {addingSlot && !readOnly && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-3 backdrop-blur-sm sm:items-center sm:p-4" onClick={() => setAddingSlot(null)}>
+          <form
+            className="w-full max-w-md rounded-2xl border border-white/10 bg-forest p-5 text-white shadow-2xl sm:rounded-2xl"
+            onSubmit={handleAddSubmit}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-accent">New Entry</p>
+                <h2 className="mt-1 text-lg font-bold">
+                  Schedule Class
+                </h2>
+                <p className="mt-0.5 text-[10px] text-white/50">{addingSlot.dayOfWeek} • Slot {addingSlot.slotStart}</p>
+              </div>
+              <button type="button" onClick={() => setAddingSlot(null)} className="rounded-lg p-2 hover:bg-white/10 transition">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40">Batch/Class</span>
+                <select className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm outline-none focus:border-accent" value={addForm.batchId || data.batches[0]?.id} onChange={(e) => setAddForm((c) => ({ ...c, batchId: e.target.value }))}>
+                  {data.batches.map((b) => (<option key={b.id} value={b.id}>{b.batchName}</option>))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40">Subject</span>
+                <select className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm outline-none focus:border-accent" value={addForm.subjectId || data.subjects[0]?.id} onChange={(e) => setAddForm((c) => ({ ...c, subjectId: e.target.value }))}>
+                  {data.subjects.map((s) => (<option key={s.id} value={s.id}>{s.subjectName}</option>))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40">Teacher</span>
+                <select className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm outline-none focus:border-accent" value={addForm.teacherId || data.teachers[0]?.id} onChange={(e) => setAddForm((c) => ({ ...c, teacherId: e.target.value }))}>
+                  {data.teachers.map((t) => (<option key={t.id} value={t.id}>{t.name}</option>))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-widest text-white/40">Room</span>
+                <select className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm outline-none focus:border-accent" value={addForm.roomId || data.rooms[0]?.id} onChange={(e) => setAddForm((c) => ({ ...c, roomId: e.target.value }))}>
+                  {data.rooms.map((r) => (<option key={r.id} value={r.id}>{r.roomName}</option>))}
+                </select>
+              </label>
+            </div>
+
+            <div className="mt-5 flex gap-3">
+              <button className="flex-1 rounded-lg bg-accent px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition hover:bg-white hover:text-ink" type="submit" disabled={loading === "add-entry"}>
+                {loading === "add-entry" ? "Adding..." : "Add Class"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* ─── Holiday & Leave Modal ────────────────── */}
       {showHolidayModal && !readOnly && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 backdrop-blur-sm sm:p-4" onClick={() => setShowHolidayModal(false)}>
@@ -790,7 +888,7 @@ export function TimetableWorkspace({
                     body: JSON.stringify({ ...holidayForm, fullDay: true })
                   });
                   return { ok: response.ok, payload: await response.json() };
-                });
+                }, "Saving holiday record...");
                 setHolidayForm({ holidayDate: "", holidayName: "" });
               }}
             >
@@ -844,6 +942,43 @@ export function TimetableWorkspace({
                 Save Leave
               </button>
             </form>
+          </div>
+        </div>
+      )}
+      {/* ─── Conflicts Modal ──────────────────────── */}
+      {showConflictsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 backdrop-blur-sm sm:p-4" onClick={() => setShowConflictsModal(false)}>
+          <div
+            className="w-full max-w-md rounded-2xl border border-ink/10 bg-white p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                <h2 className="text-sm font-bold text-ink">Timetable Conflicts</h2>
+              </div>
+              <button type="button" onClick={() => setShowConflictsModal(false)} className="rounded-lg p-2 hover:bg-slate-100 transition">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+              {conflicts.map((conflict) => (
+                <div key={`${conflict.type}-${conflict.entryIds.join("-")}`} className="rounded-xl border border-red-100 bg-red-50/50 p-4">
+                  <p className="text-sm font-medium text-red-700 leading-relaxed">{conflict.message}</p>
+                  <p className="mt-1.5 text-[10px] font-bold uppercase tracking-wider text-red-400">
+                    {conflict.type.replaceAll("_", " ")}
+                  </p>
+                </div>
+              ))}
+              {conflicts.length === 0 && (
+                <div className="rounded-xl bg-emerald-50 p-4 text-sm font-medium text-emerald-600">
+                  ✓ No conflicts detected. Your timetable looks solid.
+                </div>
+              )}
+            </div>
+            <button className="w-full rounded-xl bg-slate-100 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-ink transition hover:bg-slate-200 mt-4" type="button" onClick={() => setShowConflictsModal(false)}>
+              Close
+            </button>
           </div>
         </div>
       )}

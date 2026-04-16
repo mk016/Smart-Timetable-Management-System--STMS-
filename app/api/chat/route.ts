@@ -100,5 +100,5 @@ Core Rules for Chatting:
     }
   });
 
-  return result.toTextStreamResponse();
+  return result.toDataStreamResponse();
 }

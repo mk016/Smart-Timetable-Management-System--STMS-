@@ -337,7 +337,7 @@ export function generateTimetable(data: AppData): GenerationResult {
         }
 
         const newEntry: TimetableEntry = {
-          id: `tt-${subject.id}-${batch.id}-${sessionIndex + 1}`,
+          id: `tt-${subject.id}-${batch.id}-${sessionIndex + 1}-${Math.random().toString(36).substring(2, 8)}`,
           batchId: batch.id,
           subjectId: subject.id,
           teacherId: teacher.id,
